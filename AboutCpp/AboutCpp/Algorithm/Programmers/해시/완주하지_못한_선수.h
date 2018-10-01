@@ -8,6 +8,8 @@
 
 using namespace std;
 
+// 해시 모르겟어요....ㅠ
+
 string solution(vector<string> participant, vector<string> completion) {
 
 	string overlapStringBuffer{};
