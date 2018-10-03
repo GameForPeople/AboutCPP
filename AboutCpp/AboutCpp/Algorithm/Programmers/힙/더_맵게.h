@@ -1,5 +1,7 @@
 #pragma once
 
+// 우선순위 큐 배움!! 왕좋음!! 꼭 기억해라 멍청아!
+
 #include <string>
 #include <vector>
 #include <queue>
