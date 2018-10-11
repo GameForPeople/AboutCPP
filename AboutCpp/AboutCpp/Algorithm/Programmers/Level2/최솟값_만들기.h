@@ -14,7 +14,9 @@ int solution(vector<int> A, vector<int> B)
 	sort(A.begin(), A.end(), [](int a, int b)->bool {return a > b; });
 	sort(B.begin(), B.end(), [](int a, int b)->bool {return a < b; });
 
-	for (auto i)
+	for (int i = 0; i < A.size(); ++i) {
+		answer += A[i] * B[i];
+	}
 
 	return answer;
 }
