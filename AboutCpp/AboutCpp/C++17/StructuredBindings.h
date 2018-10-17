@@ -1,6 +1,7 @@
 #pragma once
 
 // Structured Bindings
+// https://en.cppreference.com/w/cpp/language/structured_binding
 
 /*
 	1. Pair, Tuple은 const를 붙여서 사용이 가능하나, structure는 불가능한 것으로 보임.
