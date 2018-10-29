@@ -24,7 +24,6 @@ namespace EXAMPLE_MAP
 
 	public:
 		bool operator <(const TestClass &rhs) const {
-
 			return stringBuffer < rhs.stringBuffer;
 		}
 	};
@@ -71,5 +70,11 @@ namespace EXAMPLE_MAP
 		}
 
 		std::cout << testSet.max_size() << "\n";
+
+		string fileNameBuffer = "UserData/Saved/AA_UserData.txt";
+		fileNameBuffer[15] = 'S';
+		fileNameBuffer[16] = 'S';
+
+		std::cout << fileNameBuffer << "\n";
 	}
 }
