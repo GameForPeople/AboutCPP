@@ -6,48 +6,52 @@ using namespace std;
 
 namespace CUSTOM_NODE_LIST
 {
+	template <typename DATA>
 	class CustomNode
 	{
-		int a;
+		DATA data;
 
 	public:
 		CustomNode* left;
 		CustomNode* right;
 
 	public:
-		CustomNode(int InA, CustomNode* InLeft, CustomNode* InRight)
-			: a(InA), left(InLeft), right(InRight) 
+		CustomNode(DATA InData, CustomNode* InLeft, CustomNode* InRight)
+			: data(InData), left(InLeft), right(InRight)
 		{};
 
 		void Print()
 		{
-			std::cout << "a의 값은 : "<< a << "\n";
+			std::cout << "data의 값은 : "<< data << "\n";
 		}
 	};
 
 	int count = 0;
 
+	template <typename T>
 	class NodeManager
 	{
-		CustomNode* WaitNodeCont;
+		CustomNode<T>* WaitNodeCont;
 
 	public:
 		NodeManager() 
 		{ 
-			WaitNodeCont = new CustomNode(0, nullptr, nullptr);
+			WaitNodeCont = new CustomNode<T>(0, nullptr, nullptr);
 			//WaitNodeCont = nullptr;
 		}
 
-		void Create(CustomNode* pRetNode)
+		CustomNode<T>* Create()
 		{
-			pRetNode = new CustomNode(count++, nullptr, nullptr);
+			CustomNode<T>* pRetNode = new CustomNode<T>(count++, nullptr, nullptr);
 
 			WaitNodeCont->left = pRetNode;
 			pRetNode->right = WaitNodeCont;
 			WaitNodeCont = pRetNode;
+
+			return pRetNode;
 		}
 
-		void Push(CustomNode* pRetNode)
+		void Push(CustomNode<T>* pRetNode)
 		{
 			// 한칸씩 밀고는 귀찮으니 포인터만 슥.
 			WaitNodeCont->left = pRetNode;
@@ -56,9 +60,9 @@ namespace CUSTOM_NODE_LIST
 			WaitNodeCont = pRetNode;
 		}
 
-		void Pop(CustomNode* pRetNode)
+		void Pop(CustomNode<T>* pRetNode)
 		{
-			// 기존 노드만 새로 이어주면 됩니다.
+			// 기존 노드만 이어주면 됩니다.
 			if (pRetNode->left == nullptr)
 			{
 				WaitNodeCont = WaitNodeCont->right;
@@ -73,7 +77,7 @@ namespace CUSTOM_NODE_LIST
 
 		void Print()
 		{
-			CustomNode* newNode = WaitNodeCont;
+			CustomNode<T>* newNode = WaitNodeCont;
 			
 			while (newNode->right != nullptr)
 			{
@@ -83,24 +87,25 @@ namespace CUSTOM_NODE_LIST
 		}
 	};
 
+	template <class T> //example
 	void func()
 	{
-		NodeManager nodeManager;
-		NodeManager nodeManager2;
+		NodeManager<T> nodeManager;
+		NodeManager<T> nodeManager2;
 		
-		CustomNode* pRetNode   =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
-		CustomNode* pRetNode1  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
-		CustomNode* pRetNode2  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
-		CustomNode* pRetNode3  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
-		CustomNode* pRetNode4  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
-		CustomNode* pRetNode5  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
+		CustomNode<T>* pRetNode   =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
+		CustomNode<T>* pRetNode1  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
+		CustomNode<T>* pRetNode2  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
+		CustomNode<T>* pRetNode3  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
+		CustomNode<T>* pRetNode4  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
+		CustomNode<T>* pRetNode5  =nullptr ; //= new CustomNode(count++, nullptr, nullptr);
 
-		nodeManager.Create(pRetNode);
-		nodeManager.Create(pRetNode1);
-		nodeManager.Create(pRetNode2);
-		nodeManager.Create(pRetNode3);
-		nodeManager.Create(pRetNode4);
-		nodeManager.Create(pRetNode5);
+		pRetNode = nodeManager.Create();
+		pRetNode1 = nodeManager.Create();
+		pRetNode2 = nodeManager.Create();
+		pRetNode3 = nodeManager.Create();
+		pRetNode4 = nodeManager.Create();
+		pRetNode5 = nodeManager.Create();
 
 		std::cout << "Start Print \n\n";
 
