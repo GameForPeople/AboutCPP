@@ -23,9 +23,9 @@ namespace EXAMPLE_MAP
 		}
 
 	public:
-		bool operator <(const TestClass &rhs) const {
-			return stringBuffer < rhs.stringBuffer;
-		}
+		//bool operator <(const TestClass &rhs) const {
+		//	return stringBuffer < rhs.stringBuffer;
+		//}
 	};
 
 	void func()
@@ -55,14 +55,25 @@ namespace EXAMPLE_MAP
 		testSet.insert(make_pair(i.stringBuffer, i));
 		testSet.insert(make_pair(j.stringBuffer, j));
 
+		map<string, TestClass>::iterator pBuffer = testSet.emplace("CaB", TestClass("CaAAAAAAAAAAAAAAAAAAAAAB", 11)).first;
+
+		map<string, TestClass>::iterator* pIter = &pBuffer;
+		//testSet.emplace("CaB", TestClass("CaAAAAAAAAAAAAAAAAAAAAAB", 11)).first;
+		
+		//map<string, TestClass>::iterator* pBuffer = &testSet.find("CaB");
+		std::cout << "사이즈는 : " << sizeof(pIter) << "\n";
+
 		for (auto iter : testSet)
 		{
 			iter.second.Print();
 		}
 
-		g.value = 777;
-		// testSet.find() ? 여기서 파인드가 힘듬.
-		testSet.find("E")->second = g;
+		//g.value = 777;
+		//// testSet.find() ? 여기서 파인드가 힘듬.
+		//testSet.find("E")->second = g;
+
+		(*pIter)->second.Print();
+		testSet.erase(*pIter);
 
 		for (auto iter : testSet)
 		{
@@ -70,11 +81,5 @@ namespace EXAMPLE_MAP
 		}
 
 		std::cout << testSet.max_size() << "\n";
-
-		string fileNameBuffer = "UserData/Saved/AA_UserData.txt";
-		fileNameBuffer[15] = 'S';
-		fileNameBuffer[16] = 'S';
-
-		std::cout << fileNameBuffer << "\n";
 	}
 }

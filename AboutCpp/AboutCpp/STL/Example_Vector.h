@@ -37,7 +37,7 @@ namespace EXAMPLE_VECTOR
 
 		for (auto& iter : intCont)
 		{
-			std::cout << iter << " ";
+			//std::cout << iter << " ";
 		}
 	}
 }
