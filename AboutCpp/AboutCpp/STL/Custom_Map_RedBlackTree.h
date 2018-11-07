@@ -76,6 +76,49 @@ public:
 	{
 		return value;
 	}
+
+public:
+	// Debug.
+	void PrintNodeInfo(rbTreeNode<KEY, VALUE>* pNullNode)
+	{
+		std::cout << "       ";
+
+		cout << key << ' ';
+
+		std::cout << "    ";
+
+		if (color == RED)
+			cout << "RED   ";
+		else
+			cout << "BLACK ";
+
+		std::cout << "     ";
+
+		cout << value << ' ';
+
+		std::cout << "     ";
+
+		if (up != pNullNode)
+			cout << up->key << ' ';
+		else
+			cout << "NULL ";
+
+		std::cout << "     ";
+
+		if (left != pNullNode)
+			cout << left->key << ' ';
+		else
+			cout << "NULL ";
+
+		std::cout << "     ";
+
+		if (right != pNullNode)
+			cout << right->key << ' ';
+		else
+			cout << "NULL ";
+
+		std::cout << endl;
+	}
 };
 
 template <typename KEY, typename VALUE>
@@ -87,14 +130,14 @@ class rbTree
 		BLACK		=		false		//FALSE
 	};
 
-	rbTreeNode<KEY, VALUE>* pRoot;
 	rbTreeNode<KEY, VALUE>* pNullNode;
+	rbTreeNode<KEY, VALUE>* pRoot;
 
 public:
-	rbTree<KEY, VALUE>() : pNullNode(new rbTreeNode<KEY, VALUE>()) //, pRoot(pNullNode) // <-- Error
+	rbTree<KEY, VALUE>() : pNullNode(new rbTreeNode<KEY, VALUE>()) , pRoot(pNullNode)
 	{
-		pRoot = pNullNode;
 		/* In Node Construct rbTreeNode::rbTreeNode()
+		pRoot = pNullNode;
 		pNullNode->up = 0;
 		pNullNode->left = 0;
 		pNullNode->right = 0;
@@ -108,9 +151,11 @@ public:
 
 		if (pRoot != nullptr)
 			delete pRoot;
+		pRoot = nullptr;
 
 		if(pNullNode != nullptr)
 			delete pNullNode;
+		pNullNode = nullptr;
 	};
 
 public:
@@ -126,7 +171,11 @@ private:
 	void					_LeftRotate(rbTreeNode<KEY, VALUE>* RetNode);
 	void					_RightRotate(rbTreeNode<KEY, VALUE>* RetNode);
 
+	void					_NewLeftRotate(rbTreeNode<KEY, VALUE>* RetNode);
+	void					_NewRightRotate(rbTreeNode<KEY, VALUE>* RetNode);
+
 	rbTreeNode<KEY, VALUE>*	_GetNextNode(rbTreeNode<KEY, VALUE>* InNode);
+	rbTreeNode<KEY, VALUE>*	_GetUncleNode(rbTreeNode<KEY, VALUE>* InNode);
 
 public:
 	void					PrintTree();
@@ -208,6 +257,16 @@ rbTreeNode<KEY, VALUE>* rbTree<KEY, VALUE>::Insert(const KEY& InKey, const VALUE
 
 #pragma endregion
 
+#pragma region [ 삽입하는 노드의 자식노드 및 색 설정 ]
+
+	// 삽입한 노드 후처리입니다. 자식 좌, 우는 pNullNode로 설정해줍니다, 레드 - 블랙트리 법칙에 의해, 삽입한 노드의 색은 RED(TRUE)로 설정해줍니다.
+	// 아래 3줄은, 생성자에서 처리.
+	//pRetNode->left = pNullNode;
+	//pRetNode->right = pNullNode;
+	//pRetNode->color = RED;
+
+#pragma endregion
+
 #pragma region [ 삽입하는 노드의 부모노드 찾기 ]
 	// 삽입될 수 있는 빈 자리까지 이동합니다.
 	// pTraversalNode는 pRetNode가 삽입될 수 있는 위치(정확히는 트리의 리프노드의 자식)까지 이동하는 노드-포인터 입니다.
@@ -232,7 +291,9 @@ rbTreeNode<KEY, VALUE>* rbTree<KEY, VALUE>::Insert(const KEY& InKey, const VALUE
 
 	// 현재 부모 노드(RetNode->up == oldBuffer)가 pNullNode일 경우, 삽입한 노드는 트리의 pRoot노드가 됩니다.
 	if (pParentNode == pNullNode)
+	{
 		pRoot = pRetNode;
+	}
 	else 
 	{
 		// 트리의 최초 노드가 아닐 경우, 부모 노드( pParentNode == pRetNode->up)의 키 값과 비교해, 부모 노드에서의 위치 (Left Or Right)를 결정 후 연결해줍니다.
@@ -240,25 +301,21 @@ rbTreeNode<KEY, VALUE>* rbTree<KEY, VALUE>::Insert(const KEY& InKey, const VALUE
 			pParentNode->left = pRetNode;
 		else
 			pParentNode->right = pRetNode;
+
+		// 위에 사용했던 포인트 재사용. 원본을 잘못쓰는 경우 방지.
+		pTraversalNode = pRetNode;
+
+		// 삽입 시, 균형 여부를 검사하고 관련 필요 처리를 하는 함수입니다. ( [Insert Case 1 ] 첫 삽입일때는 필요없습니다.(위의 if문, -- if (pParentNode == pNullNode) )
+		_ChangeForInsert(pTraversalNode);
 	}
 
 #pragma endregion
 
-#pragma region [ 삽입한 노드의 자식노드 및 색 설정 ]
-
-	// 삽입한 노드 후처리입니다. 자식 좌, 우는 pNullNode로 설정해줍니다, 레드 - 블랙트리 법칙에 의해, 삽입한 노드의 색은 RED(TRUE)로 설정해줍니다.
-	// 아래 3줄은, 생성자에서 처리.
-	//pRetNode->left = pNullNode;
-	//pRetNode->right = pNullNode;
-	//pRetNode->color = RED;
-
-#pragma endregion
-
-	// 삽입 시, 균형 여부를 검사하고 관련 필요 처리를 하는 함수입니다.
-	_ChangeForInsert(pRetNode);
-
 	// 레드 - 블랙트리 법칙에 의해, 어떤 변환이 일어나든, 최종적으로 적색나무에서 루트 노드는 항상 검정색을 유지해야합니다.
 	pRoot->color = BLACK;
+
+	//디버그 로그 출력합니다.
+	this->PrintTree();
 
 	// 삽입한 노드를 리턴해줍니다.
 	return pRetNode;
@@ -271,60 +328,132 @@ rbTreeNode<KEY, VALUE>* rbTree<KEY, VALUE>::Insert(const KEY& InKey, const VALUE
 		#1. 내부에서 Node에 대한 메모리 회수(delete) 가 일어납니다.
 		?1. deleted된 노드의 포인터가 pNullNode를 가르키면, nullptr 관련 에러를 방지하지 않을까?
 
-	인자 : 노드의 포인터
+	인자 : 제거하려는 노드의 포인터
 
 	출력 : void
 */
 
 template <typename KEY, typename VALUE>
-void rbTree<KEY, VALUE>::Delete(rbTreeNode<KEY, VALUE>* DeletedNode)
+void rbTree<KEY, VALUE>::Delete(rbTreeNode<KEY, VALUE>* pDeletedNode)
 {
-	// 제거하려는 노드가 pNullNode가 아닌지 확인합니다. (pNullNode 제거하면 클납니다.)
-	if (DeletedNode != pNullNode)
+	// 제거하려는 노드가 pNullNode가 아닌지 확인합니다. (pNullNode 제거하면 클납니다.) 실제에서는 이럴 일 거의 없기 떄문에, 주석처리.
+	if (pDeletedNode == pNullNode)
 	{
-		rbTreeNode<KEY, VALUE>* nodeA = pNullNode;
-		rbTreeNode<KEY, VALUE>* nodeB = pNullNode;
-
-		//삭제하는 노드의 자식 개수 여부를 확인합니다.
-		if (DeletedNode->left == pNullNode || DeletedNode->right == pNullNode)
-			nodeB = DeletedNode;
-		else
-			// 자식이 있을 경우, 해당 자리에 어떤 노드가 와야하는지를 구합니다.
-			nodeB = _GetNextNode(DeletedNode);
-
-		// 새로 위치되는 노드의 자식여부를 검사합니다. 해당 노드는 항상 0 또는 1 개의 자식을 가집니다. ( 2개의 자식을 가질 수 없습니다. #1 pNullNode는 자식 카운트에서 제외합니다.)
-		if (nodeB->left != pNullNode)
-			nodeA = nodeB->left;
-		else
-			nodeA = nodeB->right;
-
-		nodeA->up = nodeB->up;
-
-		// 어떤 노드의 부모노드가 pNullNode일 때는, 해당 노드가 pRootNode임을 뜻합니다.
-		if (nodeB->up == pNullNode)
-			pRoot = nodeA;
-		// nodeB의 부모와, nodeA를 연결짓습니다.
-		else
-		{
-			if (nodeB == nodeB->up->left)
-				nodeB->up->left = nodeA;
-			else
-				nodeB->up->right = nodeA;
-		}
-
-		// nodeB가 
-		if (nodeB != DeletedNode) 
-		{
-			DeletedNode->key = nodeB->key;
-			//DeletedNode->value = nodeB->value;
-		}
-
-		if (nodeB->color == BLACK)
-			_ChangeForDelete(nodeA);
-
-		nodeA->color = BLACK;
-		delete nodeB;
+		return;
 	}
+
+	// 제거하려는 노드의 색이 빨간색일 경우, 기존의 이진트리와 비슷하게 삭제해주시면 됩니다.
+	if (pDeletedNode.color == RED)
+	{
+		// 자식이 없을 경우(두 자식이 모두 nullNode일 경우, 
+		if (pDeletedNode->left == pNullNode && pDeletedNode->right == pNullNode)
+		{
+			//if(pDeletedNode->up == pNullNode) -> 노드 색이 빨간 노드는, 루트노드가 될 수 없음.
+
+			//부모노드에게 자식이 운명하셨음을 알리고.... (nullNode를 연결해주고).
+			if (pDeletedNode->up->left == pDeletedNode)
+				pDeletedNode->up->left = pNullNode;
+			else
+				pDeletedNode->up->right = pNullNode;
+
+			// (사망)
+			delete pDeletedNode;
+			pDeletedNode = nullptr;
+
+			return;
+		}
+
+		// 자식이 두개가 있을 경우,
+		else if (pDeletedNode->left != pNullNode && pDeletedNode->right != pNullNode)
+		{
+
+		}
+
+		// 아래 두 조건은 레드블랙트리에서 발생하지 않음.
+
+		// 자식이 1분만 계신데, 오른쪽일 경우 (발생하지 않음)
+		else if (pDeletedNode->left == pNullNode)
+		{
+			std::cout << " [DEBUG_LOG] line 371 발생하지 말아야할 조건 분기 입니다. "
+			//부모노드에게 오른쪽 자식을 맞기고..
+			if (pDeletedNode->up->left == pDeletedNode)
+				pDeletedNode->up->left = pDeletedNode->right;
+			else
+				pDeletedNode->up->right = pDeletedNode->right;
+
+			// 아이에게도 새 부모님이 누군지 알려주고..
+			pDeletedNode->right->up = pDeletedNode->up->up;
+
+			// (사망)
+			delete pDeletedNode;
+			pDeletedNode = nullptr;
+
+			return;
+		}
+		// 자식이 1분만 계신데, 왼쪽일 경우 (발생하지 않음)
+		else if (pDeletedNode->right == pNullNode)
+		{
+			std::cout << " [DEBUG_LOG] line 390 발생하지 말아야할 조건 분기 입니다. "
+
+			//부모노드에게 왼쪽 자식을 맞기고..
+			if (pDeletedNode->up->left == pDeletedNode)
+				pDeletedNode->up->left = pDeletedNode->left;
+			else
+				pDeletedNode->up->right = pDeletedNode->left;
+
+			// 아이에게도 새 부모님이 누군지 알려주고..
+			pDeletedNode->left->up = pDeletedNode->up->up;
+
+			// (사망)
+			delete pDeletedNode;
+			pDeletedNode = nullptr;
+
+			return;
+		}
+	}
+
+
+	rbTreeNode<KEY, VALUE>* nodeA = pNullNode;
+	rbTreeNode<KEY, VALUE>* nodeB = pNullNode;
+
+	//삭제하는 노드의 자식 개수 여부를 확인합니다.
+		nodeB = pDeletedNode;
+	else
+		// 자식이 있을 경우, 해당 자리에 어떤 노드가 와야하는지를 구합니다.
+		nodeB = _GetNextNode(pDeletedNode);
+
+	// 새로 위치되는 노드의 자식여부를 검사합니다. 해당 노드는 항상 0 또는 1 개의 자식을 가집니다. ( 2개의 자식을 가질 수 없습니다. #1 pNullNode는 자식 카운트에서 제외합니다.)
+	if (nodeB->left != pNullNode)
+		nodeA = nodeB->left;
+	else
+		nodeA = nodeB->right;
+
+	nodeA->up = nodeB->up;
+
+	// 어떤 노드의 부모노드가 pNullNode일 때는, 해당 노드가 pRootNode임을 뜻합니다.
+	if (nodeB->up == pNullNode)
+		pRoot = nodeA;
+	// nodeB의 부모와, nodeA를 연결짓습니다.
+	else
+	{
+		if (nodeB == nodeB->up->left)
+			nodeB->up->left = nodeA;
+		else
+			nodeB->up->right = nodeA;
+	}
+
+	// nodeB가 
+	if (nodeB != pDeletedNode)
+	{
+		pDeletedNode->key = nodeB->key;
+		//pDeletedNode->value = nodeB->value;
+	}
+
+	if (nodeB->color == BLACK)
+		_ChangeForDelete(nodeA);
+
+	nodeA->color = BLACK;
+	delete nodeB;
 };
 
 
@@ -345,6 +474,56 @@ _ChangeForInsert(rbTreeNode<KEY, VALUE>* RetNode);
 template <typename KEY, typename VALUE>
 void rbTree<KEY, VALUE>::_ChangeForInsert(rbTreeNode<KEY, VALUE>* pRetNode)
 {
+	// [Insert Case 2] 이미 기존의 트리는, 레드 블랙 트리의 성질을 만족하기 때문에, 부모의 노드가 검정색일 경우, 고려해야할 문제는 없습니다.  // 해당 조건은 Insert Case 1도 포함하는 조건입니다.
+	if (pRetNode->up->color == BLACK)
+	{
+		return;
+	}
+	
+	rbTreeNode<KEY, VALUE>* pUncleNode = _GetUncleNode(pRetNode); // UncleNode Pointer : 
+	rbTreeNode<KEY, VALUE>* pGrandNode = pRetNode->up->up; // 조부모(왕부모) 노드 --> nullNode일 경우는 없습니다.
+
+	// [Insert Case 3] Recoloring - 부모노드와 UncleNode 모두 빨간색일 때, 이를 모두 검정색으로 바꾸고, 조부모노드를 빨간색으로 변경함. 
+	if (pUncleNode->color == RED /*&& pUncleNode != pNullNode // 이 조건은 빨간색에 포함. */)
+	{
+		pRetNode->up->color = BLACK;
+		pUncleNode->color = BLACK;
+		pGrandNode->color = RED;
+
+		// 이 조부모노드를 빨간색으로 변경했기 때문에, 이에 대해 동일하게 레드블랙트리 조건(더블 레드 테스트 불허용)에 대한 검사가 필요함.
+		_ChangeForInsert(pGrandNode);
+
+		return;
+	}
+
+	// [Insert Case 4] Restructuring - 부모노드는 빨간색이나, UncleNode는 검은색일 때, 모양에 따라. 작은 회전을 해줌 ( 결과는 규칙에 위반됨! 더블 레드 상태 )
+	if ((pRetNode == pRetNode->up->right) && (pRetNode->up == pGrandNode->left)) 
+	{
+		_LeftRotate(pRetNode->up);
+		//_NewLeftRotate(pRetNode->up);
+		pRetNode = pRetNode->left;
+	}
+	else if ((pRetNode == pRetNode->up->left) && (pRetNode->up == pGrandNode->right)) {
+		_RightRotate(pRetNode->up);
+		//_NewRightRotate(pRetNode->up);
+		pRetNode = pRetNode->right;
+	}
+
+
+	// [Insert Case 5] 
+	pGrandNode = pRetNode->up->up;
+
+	pRetNode->up->color = BLACK;
+	pGrandNode->color = RED;
+
+	if (pRetNode == pRetNode->up->left)
+		//_NewRightRotate(pGrandNode);
+		_RightRotate(pGrandNode);
+	else
+		//_NewLeftRotate(pGrandNode);
+		_LeftRotate(pGrandNode);
+
+	/*
 	while (pRetNode->up->color == RED)
 	{
 		// (의역) 우리 아빠가, 할아버지의 첫째 아들일때,...?
@@ -413,6 +592,7 @@ void rbTree<KEY, VALUE>::_ChangeForInsert(rbTreeNode<KEY, VALUE>* pRetNode)
 			}
 		}
 	}
+	*/
 };
 
 template <typename KEY, typename VALUE>
@@ -491,65 +671,113 @@ void rbTree<KEY, VALUE>::_ChangeForDelete(rbTreeNode<KEY, VALUE>* RetNode)
 };
 
 template <typename KEY, typename VALUE>
-void rbTree<KEY, VALUE>::_LeftRotate(rbTreeNode<KEY, VALUE>* RetNode)
+void rbTree<KEY, VALUE>::_LeftRotate(rbTreeNode<KEY, VALUE>* pRetNode)
 {
-	rbTreeNode<KEY, VALUE>* rightChildNode = RetNode->right;
+	rbTreeNode<KEY, VALUE>* pParentNode = pRetNode->up;
+	rbTreeNode<KEY, VALUE>* pRightChildNode = pRetNode->right;
 
 	// RetNode가 현재 트리의 pRootNode일 때 ( 오른쪽 자식이 루트가 됨 (LeftRotate) )
-	if (RetNode->up == pNullNode)
-		pRoot = rightChildNode;
+	if (pParentNode == pNullNode)
+		pRoot = pRightChildNode;
 	else
 	{
 		//현재 노드가 부모 노드의 왼쪽 자식 노드일때,
-		if (RetNode == RetNode->up->left)
-			RetNode->up->left = rightChildNode;
+		if (pRetNode == pParentNode->left)
+			pParentNode->left = pRightChildNode;
 
 		//현재 노드가 부모 노드의 오른쪽 자식 노드일때,
 		else
-			RetNode->up->right = rightChildNode;
+			pParentNode->right = pRightChildNode;
 	}
 
 	//현재 Ret의 부모노드와, Ret의 오른쪽 자식 노드를 부모관계로 바꿔주고, Ret노드는 자식노드의 자식으로 변경합니다.
 
 	// 내 부모님은 사실, 내 자식의 부모님이다.
-	rightChildNode->up = RetNode->up;
+	pRightChildNode->up = pRetNode->up;
 
 	// 내 자식은 사실, 내 자식의 자식 - 손자다.
-	RetNode->right = rightChildNode->left;
+	pRetNode->right = pRightChildNode->left;
 
 	// 따라서 내 자식 - 손자의 부모는 나다.
-	rightChildNode->left->up = RetNode;
+	pRightChildNode->left->up = pRetNode;
 
 	// ...나는 내 예전 자식의 자식이다.
-	rightChildNode->left = RetNode;
+	pRightChildNode->left = pRetNode;
 
 	// 결국 내 부모님은 내 옛 자식이다.
-	RetNode->up = rightChildNode;
+	pRetNode->up = pRightChildNode;
 };
 
 template <typename KEY, typename VALUE>
-void rbTree<KEY, VALUE>::_RightRotate(rbTreeNode<KEY, VALUE>* RetNode)
+void rbTree<KEY, VALUE>::_RightRotate(rbTreeNode<KEY, VALUE>* pRetNode)
 {
-	rbTreeNode<KEY, VALUE>* leftChildNode = RetNode->left;
+	rbTreeNode<KEY, VALUE>* pParentNode = pRetNode->up;
+	rbTreeNode<KEY, VALUE>* pLeftChildNode = pRetNode->left;
 
 	// 주석 _LeftRotate 하고 동일합니다..
 
-	if (RetNode->up == pNullNode) 
-		pRoot = leftChildNode;
+	if (pParentNode == pNullNode)
+		pRoot = pLeftChildNode;
 	else
 	{
 		if (RetNode == RetNode->up->left)
 			RetNode->up->left = leftChildNode;
 		else
-			RetNode->up->right = leftChildNode;
+		pParentNode->right = pLeftChildNode;
 	}
 
-	leftChildNode->up = RetNode->up;
-	RetNode->left = leftChildNode->right;
-	leftChildNode->right->up = RetNode;
-	leftChildNode->right = RetNode;
-	RetNode->up = leftChildNode;
+	pLeftChildNode->up = pRetNode->up;
+
+	pRetNode->left = pLeftChildNode->right;
+	pLeftChildNode->right->up = pRetNode;
+
+	pLeftChildNode->right = pRetNode;
+	pRetNode->up = pLeftChildNode;
 };
+
+template <typename KEY, typename VALUE>
+void rbTree<KEY, VALUE>::_NewLeftRotate(rbTreeNode<KEY, VALUE>* n)
+{
+	rbTreeNode<KEY, VALUE> *c = n->right;
+	rbTreeNode<KEY, VALUE> *p = n->up;
+
+	if (c->left != pNullNode)
+		c->left->up = n;
+
+	n->right = c->left;
+	n->up = c;
+	c->left = n;
+	c->up = p;
+
+	if (p != pNullNode) {
+		if (p->left == n)
+			p->left = c;
+		else
+			p->right = c;
+	}
+}
+
+template <typename KEY, typename VALUE>
+void rbTree<KEY, VALUE>::_NewRightRotate(rbTreeNode<KEY, VALUE>* n)
+{
+	rbTreeNode<KEY, VALUE> *c = n->left;
+	rbTreeNode<KEY, VALUE> *p = n->up;
+
+	if (c->right != pNullNode)
+		c->right->up = n;
+
+	n->left = c->right;
+	n->up = c;
+	c->right = n;
+	c->up = p;
+
+	if (p != pNullNode) {
+		if (p->right == n)
+			p->right = c;
+		else
+			p->left = c;
+	}
+}
 
 /*
 _GetNextNode(rbTreeNode<KEY, VALUE>* InNode);
@@ -594,12 +822,26 @@ rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetNextNode(rbTreeNode<KEY, VALUE>*
 };
 
 
+template <typename KEY, typename VALUE>
+rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetUncleNode(rbTreeNode<KEY, VALUE>* pInNode) 
+{
+	rbTreeNode<KEY, VALUE>* pGrandParentNode = pInNode->up->up;
+
+	if (pInNode->up == pGrandParentNode->left)
+		return pGrandParentNode->right;
+	else
+		return pGrandParentNode->left;
+}
+
+
+
 //Debug Function
 
 template <typename KEY, typename VALUE>
 void rbTree<KEY, VALUE>::PrintTree()
 {
-		
+	rbTreeNode<KEY, VALUE>* pNodeBuffer = pRoot;
+
 	if (pRoot != pNullNode)
 	{
 		std::cout << "pRootNode's Key : " << pRoot->GetKey() << "\n";
@@ -615,44 +857,9 @@ void rbTree<KEY, VALUE>::_PrintNodes(rbTreeNode<KEY, VALUE>* pNodeBuffer)
 {
 	if (pNodeBuffer->left != pNullNode)
 		_PrintNodes(pNodeBuffer->left);
-	if (pNodeBuffer != pNullNode) {
-		std::cout << "       ";
 
-		cout << pNodeBuffer->key << ' ';
+	pNodeBuffer->PrintNodeInfo(pNullNode);
 
-		std::cout << "    ";
-
-		if (pNodeBuffer->color == RED)
-			cout << "RED   ";
-		else
-			cout << "BLACK ";
-
-		std::cout << "     ";
-
-		cout << pNodeBuffer->value << ' ';
-
-		std::cout << "     ";
-
-		if (pNodeBuffer->up != pNullNode)
-			cout << pNodeBuffer->up->key << ' ';
-		else
-			cout << "NULL ";
-
-		std::cout << "     ";
-
-		if (pNodeBuffer->left != pNullNode)
-			cout << pNodeBuffer->left->key << ' ';
-		else
-			cout << "NULL ";
-
-		std::cout << "     ";
-
-		if (pNodeBuffer->right != pNullNode)
-			cout << pNodeBuffer->right->key << ' ';
-		else
-			cout << "NULL ";
-	}
-	cout << endl;
 	if (pNodeBuffer->right != pNullNode)
 		_PrintNodes(pNodeBuffer->right);
 }
