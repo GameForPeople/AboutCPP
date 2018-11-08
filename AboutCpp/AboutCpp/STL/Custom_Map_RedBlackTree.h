@@ -174,7 +174,9 @@ private:
 	void					_NewLeftRotate(rbTreeNode<KEY, VALUE>* RetNode);
 	void					_NewRightRotate(rbTreeNode<KEY, VALUE>* RetNode);
 
+	rbTreeNode<KEY, VALUE>*	_GetPrevNode(rbTreeNode<KEY, VALUE>* InNode);
 	rbTreeNode<KEY, VALUE>*	_GetNextNode(rbTreeNode<KEY, VALUE>* InNode);
+
 	rbTreeNode<KEY, VALUE>*	_GetUncleNode(rbTreeNode<KEY, VALUE>* InNode);
 
 public:
@@ -363,18 +365,50 @@ void rbTree<KEY, VALUE>::Delete(rbTreeNode<KEY, VALUE>* pDeletedNode)
 			return;
 		}
 
-		// 자식이 두개가 있을 경우,
+		// 자식이 두개가 있을 경우, 후위노드, 전위 노드를 찾아서 해결함.
 		else if (pDeletedNode->left != pNullNode && pDeletedNode->right != pNullNode)
 		{
+			std::cout << " [DEBUG_LOG] 색에 대해, 처리가 제대로 되는지, 결과를 보고 확인이 필요. \n "; // 색을	바꿔야하는가, 바꾸지 말아야하는가!
 
+			rbTreeNode<KEY, VALUE>* pBuffer = _GetNextNode(pDeletedNode);
+
+			// NextNode는, pNullNode를 양쪽 모두 갖거나 (자식이 없거나), right만 자식을 갖거나 둘중 하나임. (left는 항상 nullNode)
+			if (pBuffer->right == pNullNode)
+			{
+				// 현재 삭제하려는 노드의 키와 정보를, NextNode의 키와 정보로 교환합니다.
+				pDeletedNode->key = pBuffer->key;
+				pDeletedNode->value = pBuffer->value;
+
+				//  NextNode의 부모에게, 당신의 왼쪽 자녀가 죽음을 알림.
+				pBuffer->up->left = pNullNode;
+
+				delete pBuffer;
+				return;
+			}
+
+			// NextNode가 Right 자식을 가질 떄 입니다.
+			else
+			{
+				// 현재 삭제하려는 노드의 키와 정보를, NextNode의 키와 정보로 교환합니다.
+				pDeletedNode->key = pBuffer->key;
+				pDeletedNode->value = pBuffer->value;
+
+				//  NextNode의 부모에게, 당신의 왼쪽 자녀가 다른사람임을 알림..
+				pBuffer->up->left = pBuffer->right;
+				// 마찬 가지로, 자식에게 새부모가 생겼음을 알림.
+				pBuffer->right->up = pBuffer->up;
+
+				delete pBuffer;
+				return;
+			}
 		}
-
-		// 아래 두 조건은 레드블랙트리에서 발생하지 않음.
+		
+		// 아래 두 조건은 확실히 레드블랙트리에서 발생하지 않음.
 
 		// 자식이 1분만 계신데, 오른쪽일 경우 (발생하지 않음)
 		else if (pDeletedNode->left == pNullNode)
 		{
-			std::cout << " [DEBUG_LOG] line 371 발생하지 말아야할 조건 분기 입니다. "
+			std::cout << " [DEBUG_LOG] 빨간 노드 삭제 시, pDeletedNode->left == pNullNode 발생하지 말아야할 조건 분기 입니다. \n";
 			//부모노드에게 오른쪽 자식을 맞기고..
 			if (pDeletedNode->up->left == pDeletedNode)
 				pDeletedNode->up->left = pDeletedNode->right;
@@ -393,7 +427,7 @@ void rbTree<KEY, VALUE>::Delete(rbTreeNode<KEY, VALUE>* pDeletedNode)
 		// 자식이 1분만 계신데, 왼쪽일 경우 (발생하지 않음)
 		else if (pDeletedNode->right == pNullNode)
 		{
-			std::cout << " [DEBUG_LOG] line 390 발생하지 말아야할 조건 분기 입니다. "
+			std::cout << " [DEBUG_LOG] 빨간 노드 삭제 시, pDeletedNode->right == pNullNode 발생하지 말아야할 조건 분기 입니다. \n";
 
 			//부모노드에게 왼쪽 자식을 맞기고..
 			if (pDeletedNode->up->left == pDeletedNode)
@@ -410,13 +444,17 @@ void rbTree<KEY, VALUE>::Delete(rbTreeNode<KEY, VALUE>* pDeletedNode)
 
 			return;
 		}
+
+		else { std::cout << " [DEBUG_LOG] 빨간 노드 삭제 시, 처리되지 않은 경우의 수가 있습니다.\n"; return; }
 	}
 
 
 	rbTreeNode<KEY, VALUE>* nodeA = pNullNode;
 	rbTreeNode<KEY, VALUE>* nodeB = pNullNode;
 
+	
 	//삭제하는 노드의 자식 개수 여부를 확인합니다.
+	if(true)
 		nodeB = pDeletedNode;
 	else
 		// 자식이 있을 경우, 해당 자리에 어떤 노드가 와야하는지를 구합니다.
@@ -720,8 +758,8 @@ void rbTree<KEY, VALUE>::_RightRotate(rbTreeNode<KEY, VALUE>* pRetNode)
 		pRoot = pLeftChildNode;
 	else
 	{
-		if (RetNode == RetNode->up->left)
-			RetNode->up->left = leftChildNode;
+		if (pRetNode == pRetNode->up->left)
+			pRetNode->up->left = pLeftChildNode;
 		else
 		pParentNode->right = pLeftChildNode;
 	}
@@ -779,6 +817,35 @@ void rbTree<KEY, VALUE>::_NewRightRotate(rbTreeNode<KEY, VALUE>* n)
 	}
 }
 
+
+template <typename KEY, typename VALUE>
+rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetPrevNode(rbTreeNode<KEY, VALUE>* InNode)
+{
+	rbTreeNode<KEY, VALUE>* RetNode = InNode;
+
+	// 좌측이 널값이 아닐 경우, 
+	if (RetNode->left != pNullNode) {
+
+		RetNode = RetNode->left;
+
+		while (RetNode->right != pNullNode)
+		{
+			RetNode = RetNode->right;
+		}
+
+		return RetNode;
+	}
+	//	rbTreeNode<KEY, VALUE>* bufferNode = InNode->up;
+	//
+	//	while (bufferNode != pNullNode && InNode == bufferNode->right) 
+	//	{
+	//		InNode = bufferNode;
+	//		bufferNode = bufferNode->up;
+	//	}
+	//
+	//	return bufferNode;
+};
+
 /*
 _GetNextNode(rbTreeNode<KEY, VALUE>* InNode);
 	참고(영어입니다.) : https://www.geeksforgeeks.org/inorder-successor-in-binary-search-tree/
@@ -797,28 +864,29 @@ _GetNextNode(rbTreeNode<KEY, VALUE>* InNode);
 template <typename KEY, typename VALUE>
 rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetNextNode(rbTreeNode<KEY, VALUE>* InNode)
 {
+	rbTreeNode<KEY, VALUE>* RetNode = InNode;
+
 	// 우측이 널값이 아닐 경우, 
-	if (InNode->right != pNullNode) {
+	if (RetNode->right != pNullNode) {
 
-		InNode = InNode->right;
+		RetNode = RetNode->right;
 
-		while (InNode->left != pNullNode)
+		while (RetNode->left != pNullNode)
 		{
-			InNode = InNode->left;
+			RetNode = RetNode->left;
 		}
 
-		return InNode;
+		return RetNode;
 	}
-
-	rbTreeNode<KEY, VALUE>* bufferNode = InNode->up;
-
-	while (bufferNode != pNullNode && InNode == bufferNode->right) 
-	{
-		InNode = bufferNode;
-		bufferNode = bufferNode->up;
-	}
-
-	return bufferNode;
+//	rbTreeNode<KEY, VALUE>* bufferNode = InNode->up;
+//
+//	while (bufferNode != pNullNode && InNode == bufferNode->right) 
+//	{
+//		InNode = bufferNode;
+//		bufferNode = bufferNode->up;
+//	}
+//
+//	return bufferNode;
 };
 
 
