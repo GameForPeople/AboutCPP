@@ -1,8 +1,18 @@
 #pragma once
 
+/*
+	Custom_Map_RedBlackTree.h
+
+	2018/11/11
+
+		- Key와 Value를 가지는 STL::MAP을 흉내낸(물론 발끝도 못 따라갑니다. ), 레드블랙트리(적흑나무) 입니다.
+		- 학습용이지 (사실 학습용으로 사용하기도...), 프로젝트에 사용하면시 안됩니다.. 버그 있을 확률 거의 백프로여요. 성능도 안좋고, 제공하는 함수도 없어요... STL Map, Set 쓰셔요!
+*/
+
 #define INLINE __inline
 
-//declare
+#pragma region [ Declare rbTreeNode, rbTree ]
+
 template <typename KEY, typename VALUE>
 class rbTree;
 
@@ -78,39 +88,39 @@ public:
 	{
 		std::cout << "       ";
 
-		cout << key << ' ';
+		std::cout << key << ' ';
 
 		std::cout << "    ";
 
 		if (color == RED)
-			cout << "RED   ";
+			std::cout << "RED   ";
 		else
-			cout << "BLACK ";
+			std::cout << "BLACK ";
 
 		std::cout << "     ";
 
-		cout << value << ' ';
+		std::cout << value << ' ';
 
 		std::cout << "     ";
 
 		if (up != pNullNode)
-			cout << up->key << ' ';
+			std::cout << up->key << ' ';
 		else
-			cout << "NULL ";
+			std::cout << "NULL ";
 
 		std::cout << "     ";
 
 		if (left != pNullNode)
-			cout << left->key << ' ';
+			std::cout << left->key << ' ';
 		else
-			cout << "NULL ";
+			std::cout << "NULL ";
 
 		std::cout << "     ";
 
 		if (right != pNullNode)
-			cout << right->key << ' ';
+			std::cout << right->key << ' ';
 		else
-			cout << "NULL ";
+			std::cout << "NULL ";
 
 		std::cout << endl;
 	}
@@ -156,10 +166,12 @@ public:
 	};
 
 public:
-	rbTreeNode<KEY, VALUE>*			Search(const KEY& InKey, bool& RetResult) const ;			// 해당 Key값으로 검색하여, True시 노드 포인터 리턴, False시 없음(pNullNode Return). 
+	rbTreeNode<KEY, VALUE>*			Search(const KEY& InKey, bool& RetResult) const ;		// 해당 Key값으로 검색하여, True시 노드 포인터 리턴, False시 없음(pNullNode Return). 
 
-	rbTreeNode<KEY, VALUE>*			Insert(const KEY& InKey, const VALUE& InValue);		// 해당 key값과, Value 값을 가지고, 내부에서 할당하여 트리에 삽입 후, 해당 노드에 대한 포인터 리턴.
-	void							Delete(rbTreeNode<KEY, VALUE>* DeletedNode);		// 해당 노드를 내부에서 delete 해줌. 
+	rbTreeNode<KEY, VALUE>*			Insert(const KEY& InKey, const VALUE& InValue);			// 해당 key값과, Value 값을 가지고, 내부에서 할당하여 트리에 삽입 후, 해당 노드에 대한 포인터 리턴.
+
+	void							Delete(rbTreeNode<KEY, VALUE>* DeletedNode);			// 인자로 전달된 노드의 포인터를 통해, 해당 노드를 제거해줍니다.
+	void							Delete(KEY& InKey);										// 해당 키에 해당하는 노드를 찾아 제거해줍니다.
 
 private:
 	void							_ChangeForInsert(rbTreeNode<KEY, VALUE>* RetNode);    
@@ -176,11 +188,17 @@ private:
 
 //for Debug
 public:
-	void					PrintTree();
+	void							PrintTree();
 
 private:
-	void					_PrintNodes(rbTreeNode<KEY, VALUE>* pNodeBuffer);
+	void							_PrintNodes(rbTreeNode<KEY, VALUE>* pNodeBuffer);
 };
+
+#pragma endregion
+
+#pragma region [ Definition of Functions ]
+
+// ================================== Search
 
 /*
 	Search(const KEY& InKey, bool& RetResult);
@@ -225,11 +243,13 @@ rbTreeNode<KEY, VALUE>* rbTree<KEY, VALUE>::Search(const KEY& InKey, bool& RetRe
 };
 
 
+// ================================== Insert
+
 /*
 	Insert(const KEY& InKey, const VALUE& InValue);
 		- 인자로 제공되는 해당 키, 결과 값을 가지는 노드를 삽입하는 함수. 
-		#1. 동일한 키값에 대하여 Insert를 요청할 경우, 오류의 원인이 될 수 있습니다.
-		#2. 내부에서 Node에 대한 할당(new) 가 일어납니다.
+		!1. 기존에 트리에 존재하는 노드에 대한 동일한 키값에 대하여 Insert를 요청할 경우, 오류의 원인이 될 수 있습니다.
+		!2. 내부에서 Node에 대한 할당(new) 가 일어납니다.
 
 	인자 : 노드의 키, 데이터
 
@@ -314,10 +334,9 @@ rbTreeNode<KEY, VALUE>* rbTree<KEY, VALUE>::Insert(const KEY& InKey, const VALUE
 	return pRetNode;
 };
 
-
 /*
-_ChangeForInsert(rbTreeNode<KEY, VALUE>* RetNode);
-	- Insert 함수 내부에서 사용되며, 노드를 Insert 한 후에도, Red-Black Tree의 특징을 유지하기 위해 검사 및 처리를 해주는 함수입니다.
+	_ChangeForInsert(rbTreeNode<KEY, VALUE>* RetNode);
+		- Insert 함수 내부에서 사용되며, 노드를 Insert 한 후에도, Red-Black Tree의 특징을 유지하기 위해 검사 및 처리를 해주는 함수입니다.
 
 	#1. 관련 이론은 위키 백과, 레드-블랙 트리를 확인해 주세요! https://ko.wikipedia.org/wiki/%EB%A0%88%EB%93%9C-%EB%B8%94%EB%9E%99_%ED%8A%B8%EB%A6%AC
 
@@ -456,14 +475,20 @@ LIKE_RECURSION:
 };
 
 
+// ================================== Delete
+
 /*
 	Delete(rbTreeNode<KEY, VALUE>* DeletedNode);
-		- 인자로 제공되는 노드의 포인터를 활용해, 해당 노드를 삭제합니다.
-		#1. 내부에서 Node에 대한 메모리 회수(delete) 가 일어납니다.
+		- 인자로 제공되는 노드의 포인터를 활용해, 해당 노드를 삭제합니다!
+
+		#1. 기존 레드 - 블랙트리 방식과 조금 다른 점은 Copy Value가 아니라, Node 자체를 변경하는 점입니다.
+		( 내부에서 Node에 대한 ptr를 활용할 때, 이에 대한 참조를 보장하기 위함.)
+
+		!1. 내부에서 Node에 대한 메모리 회수(delete) 가 일어납니다.
+
 		?1. deleted된 노드의 포인터가 pNullNode를 가르키면, nullptr 관련 에러를 방지하지 않을까?
 
 	인자 : 제거하려는 노드의 포인터
-
 	출력 : void
 */
 
@@ -631,6 +656,17 @@ void rbTree<KEY, VALUE>::Delete(rbTreeNode<KEY, VALUE>* pDeletedNode)
 	delete pDeletedNode;
 };
 
+
+/*
+	_ChangeForDelete(rbTreeNode<KEY, VALUE>* pInNode);
+		- Delete 함수 내부에서 사용되며, 노드를 Delete 한 후에도, Red-Black Tree의 특징을 유지하기 위해 검사 및 처리를 해주는 함수입니다.
+	
+	#1. 관련 이론은 위키 백과, 레드-블랙 트리를 확인해 주세요! https://ko.wikipedia.org/wiki/%EB%A0%88%EB%93%9C-%EB%B8%94%EB%9E%99_%ED%8A%B8%EB%A6%AC
+	
+	인자 : Delete할 노드의 NextNode( Successor )의 ChildNode (dir - Right)
+	출력 : void
+*/
+
 template <typename KEY, typename VALUE>
 void rbTree<KEY, VALUE>::_ChangeForDelete(rbTreeNode<KEY, VALUE>* pInNode)
 {
@@ -713,6 +749,9 @@ LIKE_RECURSION:
 	}
 };
 
+
+// ================================== Rotate
+
 template <typename KEY, typename VALUE>
 void rbTree<KEY, VALUE>::_LeftRotate(rbTreeNode<KEY, VALUE>* pRetNode)
 {
@@ -777,6 +816,17 @@ void rbTree<KEY, VALUE>::_RightRotate(rbTreeNode<KEY, VALUE>* pRetNode)
 	pLeftChildNode->right = pRetNode;
 	pRetNode->up = pLeftChildNode;
 };
+
+
+// ================================== GetNode Function
+
+/*
+	_GetPrevNode(rbTreeNode<KEY, VALUE>* InNode);
+		Predecessor를 구하는 함수, 사용되지 않습니다.
+	
+	인자 : Delete되어, PrevNode를 구해야하는 노드의 포인터
+	출력 : Predecessor Node's Pointer
+*/
 
 template <typename KEY, typename VALUE>
 rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetPrevNode(rbTreeNode<KEY, VALUE>* InNode)
@@ -849,6 +899,15 @@ rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetNextNode(rbTreeNode<KEY, VALUE>*
 //	return bufferNode;
 };
 
+
+/*
+	_GetSiblingNode(rbTreeNode<KEY, VALUE>* pInNode);
+		- pInNode의 형제 노드의 포인터를 구하는 함수입니다.
+	
+	인자 : 노드의 포인터
+	출력 : 형제 노드의 포인터
+*/
+
 template <typename KEY, typename VALUE>
 rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetSiblingNode(rbTreeNode<KEY, VALUE>* pInNode)
 {
@@ -868,6 +927,14 @@ rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetSiblingNode(rbTreeNode<KEY, VALU
 	//}
 }
 
+
+/*
+	_GetUncleNode(rbTreeNode<KEY, VALUE>* pInNode);
+		- pInNode의 Uncle 노드의 포인터를 구하는 함수입니다.
+	
+	인자 : 노드의 포인터
+	출력 : 삼촌 노드의 포인터
+*/
 template <typename KEY, typename VALUE>
 rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetUncleNode(rbTreeNode<KEY, VALUE>* pInNode) 
 {
@@ -884,8 +951,14 @@ rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetUncleNode(rbTreeNode<KEY, VALUE>
 }
 
 
+// ================================== Debug Function
 
 //Debug Function
+
+/*
+	!1. 내부에는 재귀함수를 사용하고 있습니다. 트리 높이가 높을 경우, 스택 오버플로우가 발생할 수 있습니다.
+		(디버그 용도로만 사용하는 것을 추천드립니다.)
+*/
 
 template <typename KEY, typename VALUE>
 void rbTree<KEY, VALUE>::PrintTree()
@@ -913,3 +986,5 @@ void rbTree<KEY, VALUE>::_PrintNodes(rbTreeNode<KEY, VALUE>* pNodeBuffer)
 	if (pNodeBuffer->right != pNullNode)
 		_PrintNodes(pNodeBuffer->right);
 }
+
+#pragma endregion
