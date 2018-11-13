@@ -118,6 +118,9 @@ namespace CUSTOM_NODE_LIST
 		nodeManager2.Push(pRetNode3);
 
 		nodeManager.Print();
+
+		std::cout << "\n\n";
+
 		nodeManager2.Print();
 	}
 }

@@ -1,8 +1,18 @@
 #pragma once
 
+/*
+	Custom_Map_RedBlackTree.h
+
+	2018/11/11
+
+		- Key와 Value를 가지는 STL::MAP을 흉내낸(물론 발끝도 못 따라갑니다. ), 레드블랙트리(적흑나무) 입니다.
+		- 학습용이지 (사실 학습용으로 사용하기도...), 프로젝트에 사용하면시 안됩니다.. 버그 있을 확률 거의 백프로여요. 성능도 안좋고, 제공하는 함수도 없어요... STL Map, Set 쓰셔요!
+*/
+
 #define INLINE __inline
 
-//declare
+#pragma region [ Declare rbTreeNode, rbTree ]
+
 template <typename KEY, typename VALUE>
 class rbTree;
 
@@ -78,39 +88,39 @@ public:
 	{
 		std::cout << "       ";
 
-		cout << key << ' ';
+		std::cout << key << ' ';
 
 		std::cout << "    ";
 
 		if (color == RED)
-			cout << "RED   ";
+			std::cout << "RED   ";
 		else
-			cout << "BLACK ";
+			std::cout << "BLACK ";
 
 		std::cout << "     ";
 
-		cout << value << ' ';
+		std::cout << value << ' ';
 
 		std::cout << "     ";
 
 		if (up != pNullNode)
-			cout << up->key << ' ';
+			std::cout << up->key << ' ';
 		else
-			cout << "NULL ";
+			std::cout << "NULL ";
 
 		std::cout << "     ";
 
 		if (left != pNullNode)
-			cout << left->key << ' ';
+			std::cout << left->key << ' ';
 		else
-			cout << "NULL ";
+			std::cout << "NULL ";
 
 		std::cout << "     ";
 
 		if (right != pNullNode)
-			cout << right->key << ' ';
+			std::cout << right->key << ' ';
 		else
-			cout << "NULL ";
+			std::cout << "NULL ";
 
 		std::cout << endl;
 	}
@@ -126,7 +136,7 @@ class rbTree
 		BLACK		=		false		//FALSE
 	};
 
-	rbTreeNode<KEY, VALUE>*			pNullNode;	// NullNode's Color is Black.
+	rbTreeNode<KEY, VALUE>*			pNullNode;	// NullNode's Color is Black. == same nil
 	rbTreeNode<KEY, VALUE>*			pRoot;		// Root!
 
 public:
@@ -156,10 +166,12 @@ public:
 	};
 
 public:
-	rbTreeNode<KEY, VALUE>*			Search(const KEY& InKey, bool& RetResult) const ;			// 해당 Key값으로 검색하여, True시 노드 포인터 리턴, False시 없음(pNullNode Return). 
+	rbTreeNode<KEY, VALUE>*			Search(const KEY& InKey, bool& RetResult) const ;		// 해당 Key값으로 검색하여, True시 노드 포인터 리턴, False시 없음(pNullNode Return). 
 
-	rbTreeNode<KEY, VALUE>*			Insert(const KEY& InKey, const VALUE& InValue);		// 해당 key값과, Value 값을 가지고, 내부에서 할당하여 트리에 삽입 후, 해당 노드에 대한 포인터 리턴.
-	void							Delete(rbTreeNode<KEY, VALUE>* DeletedNode);		// 해당 노드를 내부에서 delete 해줌. 
+	rbTreeNode<KEY, VALUE>*			Insert(const KEY& InKey, const VALUE& InValue);			// 해당 key값과, Value 값을 가지고, 내부에서 할당하여 트리에 삽입 후, 해당 노드에 대한 포인터 리턴.
+
+	void							Delete(rbTreeNode<KEY, VALUE>* DeletedNode);			// 인자로 전달된 노드의 포인터를 통해, 해당 노드를 제거해줍니다.
+	bool							DeleteWithSearch(const KEY& InKey);						// 해당 키에 해당하는 노드를 찾아 제거해줍니다.
 
 private:
 	void							_ChangeForInsert(rbTreeNode<KEY, VALUE>* RetNode);    
@@ -168,19 +180,25 @@ private:
 	void							_LeftRotate(rbTreeNode<KEY, VALUE>* RetNode);
 	void							_RightRotate(rbTreeNode<KEY, VALUE>* RetNode);
 
-	INLINE rbTreeNode<KEY, VALUE>*	_GetPrevNode(rbTreeNode<KEY, VALUE>* InNode);
-	INLINE rbTreeNode<KEY, VALUE>*	_GetNextNode(rbTreeNode<KEY, VALUE>* InNode);
+	INLINE rbTreeNode<KEY, VALUE>*	_GetPrevNode(rbTreeNode<KEY, VALUE>* const InNode);
+	INLINE rbTreeNode<KEY, VALUE>*	_GetNextNode(rbTreeNode<KEY, VALUE>* const InNode);
 
-	INLINE rbTreeNode<KEY, VALUE>*	_GetSiblingNode(rbTreeNode<KEY, VALUE>* InNode);
-	INLINE rbTreeNode<KEY, VALUE>*	_GetUncleNode(rbTreeNode<KEY, VALUE>* InNode);
+	INLINE rbTreeNode<KEY, VALUE>*	_GetSiblingNode(rbTreeNode<KEY, VALUE>* const InNode);
+	INLINE rbTreeNode<KEY, VALUE>*	_GetUncleNode(rbTreeNode<KEY, VALUE>* const InNode);
 
 //for Debug
 public:
-	void					PrintTree();
+	void							PrintTree();
 
 private:
-	void					_PrintNodes(rbTreeNode<KEY, VALUE>* pNodeBuffer);
+	void							_PrintNodes(rbTreeNode<KEY, VALUE>* pNodeBuffer);
 };
+
+#pragma endregion
+
+#pragma region [ Definition of Functions ]
+
+// ================================== Search
 
 /*
 	Search(const KEY& InKey, bool& RetResult);
@@ -225,11 +243,13 @@ rbTreeNode<KEY, VALUE>* rbTree<KEY, VALUE>::Search(const KEY& InKey, bool& RetRe
 };
 
 
+// ================================== Insert
+
 /*
 	Insert(const KEY& InKey, const VALUE& InValue);
 		- 인자로 제공되는 해당 키, 결과 값을 가지는 노드를 삽입하는 함수. 
-		#1. 동일한 키값에 대하여 Insert를 요청할 경우, 오류의 원인이 될 수 있습니다.
-		#2. 내부에서 Node에 대한 할당(new) 가 일어납니다.
+		!1. 기존에 트리에 존재하는 노드에 대한 동일한 키값에 대하여 Insert를 요청할 경우, 오류의 원인이 될 수 있습니다.
+		!2. 내부에서 Node에 대한 할당(new) 가 일어납니다.
 
 	인자 : 노드의 키, 데이터
 
@@ -304,7 +324,7 @@ rbTreeNode<KEY, VALUE>* rbTree<KEY, VALUE>::Insert(const KEY& InKey, const VALUE
 
 #pragma endregion
 
-	// 레드 - 블랙트리 법칙에 의해, 어떤 변환이 일어나든, 최종적으로 적색나무에서 루트 노드는 항상 검정색을 유지해야합니다.
+	// 레드 - 블랙트리 법칙에 의해, 어떤 변환이 일어나든, 최종적으로 적색나무에서의 루트 노드는 항상 검정색을 유지해야합니다.
 	pRoot->color = BLACK;
 
 	////(디버그)삽입 할때마다, 트리를 출력합니다.
@@ -314,10 +334,9 @@ rbTreeNode<KEY, VALUE>* rbTree<KEY, VALUE>::Insert(const KEY& InKey, const VALUE
 	return pRetNode;
 };
 
-
 /*
-_ChangeForInsert(rbTreeNode<KEY, VALUE>* RetNode);
-	- Insert 함수 내부에서 사용되며, 노드를 Insert 한 후에도, Red-Black Tree의 특징을 유지하기 위해 검사 및 처리를 해주는 함수입니다.
+	_ChangeForInsert(rbTreeNode<KEY, VALUE>* RetNode);
+		- Insert 함수 내부에서 사용되며, 노드를 Insert 한 후에도, Red-Black Tree의 특징을 유지하기 위해 검사 및 처리를 해주는 함수입니다.
 
 	#1. 관련 이론은 위키 백과, 레드-블랙 트리를 확인해 주세요! https://ko.wikipedia.org/wiki/%EB%A0%88%EB%93%9C-%EB%B8%94%EB%9E%99_%ED%8A%B8%EB%A6%AC
 
@@ -331,16 +350,16 @@ void rbTree<KEY, VALUE>::_ChangeForInsert(rbTreeNode<KEY, VALUE>* pRetNode)
 {
 LIKE_RECURSION:
 
-	// [Insert Case 2] 이미 기존의 트리는, 레드 블랙 트리의 성질을 만족하기 때문에, 부모의 노드가 검정색일 경우, 고려해야할 문제는 없습니다.  // 해당 조건은 Insert Case 1도 포함하는 조건입니다.
+	// [Insert Case 2] 이미 기존의 트리는, 레드 블랙 트리의 성질을 만족하기 때문에, 부모의 노드가 검정색일 경우, 고려할 필요가 없습니다. (-> 모든 문제는 더블 레드에서 발생합니다.)  // 해당 조건은 Insert Case 1도 포함하는 조건입니다.
 	if (pRetNode->up->color == BLACK)
 	{
 		return;
 	}
 	
-	rbTreeNode<KEY, VALUE>* pUncleNode = _GetUncleNode(pRetNode); // UncleNode Pointer : 
-	rbTreeNode<KEY, VALUE>* pGrandNode = pRetNode->up->up; // 조부모(왕부모) 노드 --> nullNode일 경우는 없습니다.
+	rbTreeNode<KEY, VALUE>* pUncleNode = _GetUncleNode(pRetNode); // UncleNode Pointer  
+	rbTreeNode<KEY, VALUE>* pGrandNode = pRetNode->up->up; // 조부모(왕부모) 노드 --> nullptr일 경우는 고려하지 않아도 됩니다. (Insert Case 1 - 2에서 걸러집니다.)
 
-	// [Insert Case 3] Recoloring - 부모노드와 UncleNode 모두 빨간색일 때, 이를 모두 검정색으로 바꾸고, 조부모노드를 빨간색으로 변경함. 
+	// [Insert Case 3] Recoloring - 부모노드와 UncleNode 모두 빨간색일 때, 이를 모두 검정색으로 바꾸고, 조부모노드를 빨간색으로 변경합니다. 
 	if (pUncleNode->color == RED /*&& pUncleNode != pNullNode // 이 조건은 빨간색에 포함. */)
 	{
 		pRetNode->up->color = BLACK;
@@ -356,7 +375,7 @@ LIKE_RECURSION:
 		//return;
 	}
 
-	// [Insert Case 4] Restructuring - 부모노드는 빨간색이나, UncleNode는 검은색일 때, 모양에 따라. 작은 회전을 해줌 ( 결과는 규칙에 위반됨! 더블 레드 상태 )
+	// [Insert Case 4] Restructuring - 부모노드는 빨간색이나, UncleNode는 검은색일 때, 모양에 따라. 작은 회전을 해줌 ( Insert Case 4를 거친 트리는 더블 레드 상태가 되며 규칙에 위반됩니다. )
 	if ((pRetNode == pRetNode->up->right) && (pRetNode->up == pGrandNode->left)) 
 	{
 		_LeftRotate(pRetNode->up);
@@ -377,93 +396,26 @@ LIKE_RECURSION:
 	pGrandNode->color = RED;
 
 	if (pRetNode == pRetNode->up->left)
-		//_NewRightRotate(pGrandNode);
 		_RightRotate(pGrandNode);
 	else
-		//_NewLeftRotate(pGrandNode);
 		_LeftRotate(pGrandNode);
-
-	/*
-	while (pRetNode->up->color == RED)
-	{
-		// (의역) 우리 아빠가, 할아버지의 첫째 아들일때,...?
-		if (pRetNode->up == pRetNode->up->up->left)
-			// Uncle Node 의 위치 찾기. --> Uncle이 Right!
-		{
-			rbTreeNode<KEY, VALUE>* uncleNode = pRetNode->up->up->right;
-
-			if (uncleNode->color == RED)
-			{
-				//삽입에서의 3번째 경우.
-
-				// 색 변경. (Recoloring)
-				pRetNode->up->color = BLACK;
-				uncleNode->color = BLACK;
-
-				pRetNode->up->up->color = RED;
-
-				// Red 색으로, 부모의 부모노드 변환 시, 해당 노드에 대한 Double Red Test 필요.
-				pRetNode = pRetNode->up->up;
-			}
-			else {
-				//삽입에서의 4번째 경우.
-
-				// 모습 변경 (Restructuring)
-				if (pRetNode == pRetNode->up->right)
-				{
-					pRetNode = pRetNode->up;
-					_LeftRotate(pRetNode);
-				}
-
-				pRetNode->up->color = BLACK;
-				pRetNode->up->up->color = RED;
-				pRetNode->up->right->color = BLACK;
-				_RightRotate(pRetNode->up->up);
-			}
-		}
-		else
-			// Uncle Node 의 위치 찾기. --> Uncle이 Left!
-		{
-			rbTreeNode<KEY, VALUE>* uncleNode = pRetNode->up->up->left;
-
-			if (uncleNode->color == RED)
-			{
-				// 색 변경. (Recoloring)
-				pRetNode->up->color = BLACK;
-				uncleNode->color = BLACK;
-
-				pRetNode->up->up->color = RED;
-
-				// Red 색으로, 부모의 부모노드 변환 시, 해당 노드에 대한 Double Red Test 필요.
-				pRetNode = pRetNode->up->up;
-			}
-			else {
-				// 모습 변경 (Restructuring)
-				if (pRetNode == pRetNode->up->left)
-				{
-					pRetNode = pRetNode->up;
-					_RightRotate(pRetNode);
-				}
-
-				pRetNode->up->color = BLACK;
-				pRetNode->up->up->color = RED;
-				pRetNode->up->right->color = BLACK;
-				_LeftRotate(pRetNode->up->up);
-			}
-		}
-	}
-	*/
 };
+
+// ================================== Delete
 
 
 /*
 	Delete(rbTreeNode<KEY, VALUE>* DeletedNode);
-		- 인자로 제공되는 노드의 포인터를 활용해, 해당 노드를 삭제합니다.
-		#1. 내부에서 Node에 대한 메모리 회수(delete) 가 일어납니다.
+		- 인자로 제공되는 노드의 포인터를 활용해, 해당 노드를 삭제합니다!
+
+		#1. 기존 레드 - 블랙트리 방식과 조금 다른 점은 Copy Value가 아니라, Node 자체를 변경하는 점입니다.
+		( 내부에서 Node에 대한 ptr를 활용할 때, 이에 대한 참조를 보장하기 위함.)
+
+		!1. 내부에서 Node에 대한 메모리 회수(delete) 가 일어납니다.
+
 		?1. deleted된 노드의 포인터가 pNullNode를 가르키면, nullptr 관련 에러를 방지하지 않을까?
 
 	인자 : 제거하려는 노드의 포인터
-
 	출력 : void
 */
 
@@ -631,6 +583,17 @@ void rbTree<KEY, VALUE>::Delete(rbTreeNode<KEY, VALUE>* pDeletedNode)
 	delete pDeletedNode;
 };
 
+
+/*
+	_ChangeForDelete(rbTreeNode<KEY, VALUE>* pInNode);
+		- Delete 함수 내부에서 사용되며, 노드를 Delete 한 후에도, Red-Black Tree의 특징을 유지하기 위해 검사 및 처리를 해주는 함수입니다.
+	
+	#1. 관련 이론은 위키 백과, 레드-블랙 트리를 확인해 주세요! https://ko.wikipedia.org/wiki/%EB%A0%88%EB%93%9C-%EB%B8%94%EB%9E%99_%ED%8A%B8%EB%A6%AC
+	
+	인자 : Delete할 노드의 NextNode( Successor )의 ChildNode (dir - Right)
+	출력 : void
+*/
+
 template <typename KEY, typename VALUE>
 void rbTree<KEY, VALUE>::_ChangeForDelete(rbTreeNode<KEY, VALUE>* pInNode)
 {
@@ -713,6 +676,53 @@ LIKE_RECURSION:
 	}
 };
 
+
+/*
+	DeleteWithSearch(const KEY& InKey);
+	
+		- 키릉 인자로 받아, 해당 키에 해당하는 노드를 찾고, 그 노드를 삭제합니다.
+
+		#1. Ptr를 사용하는 삭제 함수 (Delete) 보다 당연히 무겁습니다.
+
+		!1. 내부에서 Node에 대한 메모리 회수(delete) 가 일어납니다.
+
+		!2. 따라서, 외부에서 해당 노드에 포인터를 통한 참조가 있을 경우, nullptr에러가 날 가능성이 큽니다.
+
+	인자 : 제거하려는 노드의 키값.
+
+	출력 : bool값 - 노드 삭제 여부 ( == 해당 키를 가진 노드의 존재 여부 )
+*/
+
+template <typename KEY, typename VALUE>
+bool rbTree<KEY, VALUE>::DeleteWithSearch(const KEY& InKey)
+{
+	bool retBoolBuffer; 
+	
+	if (rbTreeNode<KEY, VALUE>* pDeletedNode = this->Search(InKey, retBoolBuffer), 
+		retBoolBuffer)
+	{
+		Delete(pDeletedNode);
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+// ================================== Rotate
+
+/*
+	_LeftRotate(rbTreeNode<KEY, VALUE>* pRetNode)
+		트리구조에서 왼쪽 회전을 시도합니다.
+
+		#1. https://en.wikipedia.org/wiki/Tree_rotation
+
+	인자 : 회전의 기준이 되는 노드의 포인터
+	출력 : void
+*/
+
 template <typename KEY, typename VALUE>
 void rbTree<KEY, VALUE>::_LeftRotate(rbTreeNode<KEY, VALUE>* pRetNode)
 {
@@ -751,13 +761,23 @@ void rbTree<KEY, VALUE>::_LeftRotate(rbTreeNode<KEY, VALUE>* pRetNode)
 	pRetNode->up = pRightChildNode;
 };
 
+/*
+	_RightRotate(rbTreeNode<KEY, VALUE>* pRetNode)
+		트리구조에서 오른쪽 회전을 시도합니다.
+
+	#1. https://en.wikipedia.org/wiki/Tree_rotation
+
+	인자 : 회전의 기준이 되는 노드의 포인터
+	출력 : void
+*/
+
 template <typename KEY, typename VALUE>
 void rbTree<KEY, VALUE>::_RightRotate(rbTreeNode<KEY, VALUE>* pRetNode)
 {
 	rbTreeNode<KEY, VALUE>* pParentNode = pRetNode->up;
 	rbTreeNode<KEY, VALUE>* pLeftChildNode = pRetNode->left;
 
-	// 주석 _LeftRotate 하고 동일합니다..
+	// 주석 _LeftRotate 하고 동일합니다..또 쓰기 너무 귀찮어요...
 
 	if (pParentNode == pNullNode)
 		pRoot = pLeftChildNode;
@@ -778,32 +798,37 @@ void rbTree<KEY, VALUE>::_RightRotate(rbTreeNode<KEY, VALUE>* pRetNode)
 	pRetNode->up = pLeftChildNode;
 };
 
+
+// ================================== GetNode Function
+
+/*
+	_GetPrevNode(rbTreeNode<KEY, VALUE>* InNode);
+		Predecessor를 구하는 함수, 사용되지 않습니다.
+	
+	인자 : Delete되어, PrevNode를 구해야하는 노드의 포인터
+	출력 : Predecessor Node's Pointer
+*/
+
 template <typename KEY, typename VALUE>
-rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetPrevNode(rbTreeNode<KEY, VALUE>* InNode)
+rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetPrevNode(rbTreeNode<KEY, VALUE>* const pInNode)
 {
-	rbTreeNode<KEY, VALUE>* RetNode = InNode;
+	rbTreeNode<KEY, VALUE>* pRetNode = pInNode;
 
-	// 좌측이 널값이 아닐 경우, 
-	if (RetNode->left != pNullNode) {
+	// 좌측이 NullNode가 아닐 경우, 
+	if (pRetNode->left != pNullNode) {
 
-		RetNode = RetNode->left;
+		// 좌측으로 포인터를 한 번 이동하고 (좌측 서브트리에 진입하고)
+		pRetNode = pRetNode->left;
 
-		while (RetNode->right != pNullNode)
+		// 해당 서브트리에서 가장 큰 값 (가장 Right에 있는 노드)를 찾고,
+		while (pRetNode->right != pNullNode)
 		{
-			RetNode = RetNode->right;
+			pRetNode = pRetNode->right;
 		}
 
-		return RetNode;
+		// 해당 노드를 리턴합니다.
+		return pRetNode;
 	}
-	//	rbTreeNode<KEY, VALUE>* bufferNode = InNode->up;
-	//
-	//	while (bufferNode != pNullNode && InNode == bufferNode->right) 
-	//	{
-	//		InNode = bufferNode;
-	//		bufferNode = bufferNode->up;
-	//	}
-	//
-	//	return bufferNode;
 };
 
 /*
@@ -822,35 +847,38 @@ _GetNextNode(rbTreeNode<KEY, VALUE>* InNode);
 */
 
 template <typename KEY, typename VALUE>
-rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetNextNode(rbTreeNode<KEY, VALUE>* InNode)
+rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetNextNode(rbTreeNode<KEY, VALUE>* const InNode)
 {
 	rbTreeNode<KEY, VALUE>* RetNode = InNode;
 
-	// 우측이 널값이 아닐 경우, 
+	// 우측이 NullNode가 아닐 경우, 
 	if (RetNode->right != pNullNode) {
 
+		// 우측으로 포인터를 한 번 이동하고 (우측 서브트리에 진입하고)
 		RetNode = RetNode->right;
 
+		// 해당 서브트리에서 가장 작은 값 (가장 Left에 있는 노드)를 찾고,
 		while (RetNode->left != pNullNode)
 		{
 			RetNode = RetNode->left;
 		}
 
+		// 해당 노드를 리턴합니다.
 		return RetNode;
 	}
-//	rbTreeNode<KEY, VALUE>* bufferNode = InNode->up;
-//
-//	while (bufferNode != pNullNode && InNode == bufferNode->right) 
-//	{
-//		InNode = bufferNode;
-//		bufferNode = bufferNode->up;
-//	}
-//
-//	return bufferNode;
 };
 
+
+/*
+	_GetSiblingNode(rbTreeNode<KEY, VALUE>* pInNode);
+		- pInNode의 형제 노드의 포인터를 구하는 함수입니다.
+	
+	인자 : 노드의 포인터
+	출력 : 형제 노드의 포인터
+*/
+
 template <typename KEY, typename VALUE>
-rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetSiblingNode(rbTreeNode<KEY, VALUE>* pInNode)
+rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetSiblingNode(rbTreeNode<KEY, VALUE>* const pInNode)
 {
 	rbTreeNode<KEY, VALUE>* pBufferNode = pInNode->up;
 
@@ -868,8 +896,17 @@ rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetSiblingNode(rbTreeNode<KEY, VALU
 	//}
 }
 
+
+/*
+	_GetUncleNode(rbTreeNode<KEY, VALUE>* pInNode);
+		- pInNode의 Uncle 노드의 포인터를 구하는 함수입니다.
+	
+	인자 : 노드의 포인터
+	출력 : 삼촌 노드의 포인터
+*/
+
 template <typename KEY, typename VALUE>
-rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetUncleNode(rbTreeNode<KEY, VALUE>* pInNode) 
+rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetUncleNode(rbTreeNode<KEY, VALUE>* const pInNode) 
 {
 	rbTreeNode<KEY, VALUE>* pGrandParentNode = pInNode->up->up;
 
@@ -884,8 +921,14 @@ rbTreeNode<KEY, VALUE>*	rbTree<KEY, VALUE>::_GetUncleNode(rbTreeNode<KEY, VALUE>
 }
 
 
+// ================================== Debug Function
 
 //Debug Function
+
+/*
+	!1. 내부에는 재귀함수를 사용하고 있습니다. 트리 높이가 높을 경우, 스택 오버플로우가 발생할 수 있습니다.
+		(디버그 용도로만 사용하는 것을 추천드립니다.)
+*/
 
 template <typename KEY, typename VALUE>
 void rbTree<KEY, VALUE>::PrintTree()
@@ -913,3 +956,5 @@ void rbTree<KEY, VALUE>::_PrintNodes(rbTreeNode<KEY, VALUE>* pNodeBuffer)
 	if (pNodeBuffer->right != pNullNode)
 		_PrintNodes(pNodeBuffer->right);
 }
+
+#pragma endregion
