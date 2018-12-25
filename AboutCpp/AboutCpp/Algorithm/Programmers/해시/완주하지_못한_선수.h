@@ -1,45 +1,44 @@
 #pragma once
 
+/*
+	완주하지 못한 선수 [해시] (https://programmers.co.kr/learn/courses/30/lessons/42576)
+		- 마라톤 참여 선수 목록과, 완주 선수 목록이 주어질 때, 완주하지 못한 선수의 이름을 리턴하라.
+
+		#0. 선수는 1명 이상, 100, 000이하
+		#1. 참가자의 이름은 1개 이상, 20개 이하의 알파벳 소문자
+		#2. 동명이인이 있을 수 있음 (중복 가능)
+
+		!0. 이 알고리즘의 분류인 "해싱"으로 솔루션을 제작하지 않았기 때문에, 
+			해싱으로된 솔루션(==BestSolution)을 하단에 추가하였습니다.
+*/
+
 #include <string>
 #include <vector>
 
 #include <algorithm>
-#include <map>
+#include <map>	// for BestSolution
 
 using namespace std;
 
-// 해시 모르겟어요....ㅠ
-
 string solution(vector<string> participant, vector<string> completion) {
 
-	string overlapStringBuffer{};
-	bool	isOverlapTrue = false;
-
-	sort(participant.begin(), participant.end(), [&isOverlapTrue, &overlapStringBuffer](string& a, string& b) -> bool
+	sort(participant.begin(), participant.end(),
+		[/* void */](string& a, string& b) 
+		noexcept(true) -> bool 
 	{
 		if (a.compare(b) < 0)
 			return true;
-		else //if (a.compare(b) > 0)
+		else  /* == else if (a.compare(b) > 0) */
 			return false;
-		//else if (a.compare(b) == 0)
-		//{
-		//	isOverlapTrue = true;
-		//	overlapStringBuffer = a;
-		//
-		//	return false;
-		//}
 	});
 
-	//if (isOverlapTrue)
-	//{
-	//	return overlapStringBuffer;
-	//}
-
-	sort(completion.begin(), completion.end(), [](string& a, string& b) -> bool
+	sort(completion.begin(), completion.end(), 
+		[/* void */](string& a, string& b) 
+		noexcept(true) -> bool
 	{
 		if (a.compare(b) < 0)
 			return true;
-		else if (a.compare(b) > 0)
+		else /* == else if (a.compare(b) > 0) */
 			return false;
 	});
 
@@ -47,21 +46,17 @@ string solution(vector<string> participant, vector<string> completion) {
 	{
 		if (completion[i].compare(participant[i]) != 0)
 		{
-			isOverlapTrue = true;
-			overlapStringBuffer = participant[i];
-			break;
+			return std::move(participant[i]);
 		}
 	}
-
-	if (isOverlapTrue)
-		return overlapStringBuffer;
-	else
-		return participant[participant.size() - 1];
-
+	
+	return std::move(participant[participant.size() - 1]);
 }
 
 
-// Best Solution
+/* 
+	다른 사람의 풀이에 있는 Bestsolution입니다.
+*/
 
 string BestSolution(vector<string> participant, vector<string> completion) {
 	string answer = "";

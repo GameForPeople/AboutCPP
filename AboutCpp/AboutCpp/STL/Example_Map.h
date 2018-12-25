@@ -15,19 +15,61 @@ namespace EXAMPLE_MAP
 		string stringBuffer;
 		int value;
 
-		TestClass(const string& InString, const int& InValue) : stringBuffer(InString), value(InValue) {};
+		TestClass(const string& InString, const int& InValue) : stringBuffer(InString), value(InValue) { std::cout << stringBuffer << "의 기본 생성자 \n"; };
+		TestClass(const TestClass& other) : stringBuffer(move(other.stringBuffer)), value(move(other.value)) { std::cout << stringBuffer << "의 복사 생성자 \n"; };
+		TestClass(TestClass&& other) noexcept : stringBuffer(move(other.stringBuffer)), value(move(other.value)) { std::cout << stringBuffer << "의 이동 생성자 \n"; };
+		~TestClass() { std::cout << stringBuffer << "의 소멸자 \n"; };
 
 		void Print()
 		{
 			std::cout << "String : " << stringBuffer << "  value : " << value << "\n";
 		}
 
+		void Change(const string& InString, const int& InValue)
+		{
+			stringBuffer = InString;
+			value = InValue;
+		}
+
 	public:
-		//bool operator <(const TestClass &rhs) const {
-		//	return stringBuffer < rhs.stringBuffer;
-		//}
+		inline bool operator <(const TestClass& rhs) const {
+			return stringBuffer < rhs.stringBuffer;
+		}
 	};
 
+	void TestFunc()
+	{
+		std::cout << "[0] \n";
+
+		map<string, TestClass*> testMap;
+
+		TestClass a("A", 1);
+		TestClass b("B", 2);
+		TestClass c("C", 3);
+		//TestClass d("B", 4);
+		//TestClass e("Caa", 5);
+		//TestClass f("d", 6);
+		//TestClass g("E", 7);
+		//TestClass h("g", 8);
+		//TestClass i("H", 9);
+		//TestClass j("i", 10);
+		std::cout << "[1] \n";
+
+		testMap.insert(pair<string, TestClass*>("ID_A", &a));
+		testMap.insert(pair<string, TestClass*>("ID_B", &b));
+		testMap.insert(pair<string, TestClass*>("ID_C", &c));
+
+		std::cout << "[2] \n";
+
+		TestClass* buf = testMap.find("ID_A")->second;
+		buf->Print();
+		buf->Change("ID_A2", 11);
+		buf->Print();
+		a.Print();
+
+		std::cout << "[E] \n";
+	}
+	
 	void func()
 	{
 		typedef pair<string, TestClass> userNode;
