@@ -1,35 +1,64 @@
 #pragma once
 
 /*
-	Custom_Set_RedBlackTree		2018/11/11 원성연
+	Custom_Set_RedBlackTree		
 
-	- 함수 GetKey()를 지원하는 클래스를 노드로 하는 레드블랙트리(적흑나무) 입니다.
-	- 어떤 버그가 있을 지 모릅니다.
+		하나의 클래스를 노드로 하는 레드블랙트리 ( 적흑나무 ? ) 코드입니다.
+		공부를 위해 참고할만한 레드 블랙 트리 코드를 찾던 중에, 만만한 코드가 없어서.... xtree...이게 정말 C++로 작성된게 맞는지...
+		
+		대학생 3학년 평균 수준에서 이해할 수 있도록 문법적으로 간단한, 
+		또 한국어로 주석을 작성하여 조금더 친절한, 
+		레드블랙트리 코드 작성을 목표로 했습니다. 
+			
+		( 사실 제가 대학생이라서...ㅎ 능력부족으로 인해.. 분명히 문제가 될 수 있는 부분이 많아요.. 개선사항이 있으실 경우, PR부탁드려요! )
+	
+	#0. 예제 함수를 제공합니다. CUSTOM_SET::TestFunc()를 main에 넣어주셔요!
+	#1. 재귀함수를 사용하지 않는 트리 순회 함수를 언젠가는 추가....ㅎ	
+	#2. 레드블랙트리에 대한 이론적인 설명은 위키백과 (https://ko.wikipedia.org/wiki/%EB%A0%88%EB%93%9C-%EB%B8%94%EB%9E%99_%ED%8A%B8%EB%A6%AC)를 확인하세요!
+
+	!0. 빌드 실패 시, 멀티 바이트와 SDL 검사의 Off, C++17 버전 사용 등을 확인해주세요!
+	!1. 당연히 병렬 제어가 되지 않습니다... c++17에 추가된 parallel stl 쓰세요..! 물론 병행성 필요 없어도... Set, Map 쓰세요!! STL 짱짱!
+	!2. 템플릿 DATA, KEY_TYPE에 대하여.. 능력부족으로 인해 일부 요구사항이 존재합니다! rbTreeNode의 주석을 확인해주세요 :)
+
+	부족한 코드를 확인해주셔서 감사합니다 :)
+
+	2019년 1월 3일 
+	원성연 올림.
+	KoreaGameMaker@gmail.com
+	GameForPeople(github)
 */
 
-// stdafx.h로 옮겨주세요.
+// stdafx.h
+// #include <iostream>
 #define		INLINE				__inline
-#define		_NORETURN			[[noreturn]]
 #define		_NODISCARD			[[nodiscard]]
 #define		_DEPRECATED			[[deprecated]]
-#define		_MAYBE_UNUSED		[[maybe_unused]]
-#define		_FALLTHROUGH		[[fallthrough]]
+#define		DEBUG_TEST_FUNC		/* Test Func Region */ 
 
-namespace CUSTOM_SET
+namespace CUSTOM_SET_REDBLACKTREE
 {
 #pragma region [ Declare rbTreeNode, rbTree ]
 
-	template <typename DATA, typename connectionSocket_TYPE>
+	template <typename DATA, typename KEY_TYPE>
 	class rbTree;
+
+	template <typename DATA, typename KEY_TYPE>
+	class rbTreeNode;
 
 	/*
 		rbTreeNode
 			- rbTree를 구성하는 단위(Node)입니다.
 
-		#0. DATA는 보관할 데이터, KEY_TYPE은 GetKey()의 자료형입니다.
+		#0. DATA는 보관할 데이터, KEY_TYPE은 GetKey()의 반환되는 자료형입니다.
 
 		!0. DATA는 의무적으로 GetKey() 함수를 제공해야합니다.
-		!1. KEY_TYPE이 기초 자료형이 아닐 경우, 키값 비교에 사용될 연산자 operator<()를 제공해야합니다.
+		!1. KEY_TYPE이 기초 자료형이 아닐 경우 일부 연산자를 요구합니다. (TestKey Class를 참고해주세요!)
+			- 키 값 크기 비교에 사용될 연산자 operator<()를 제공(오버로딩)해야합니다.
+			- 키 값이 동일한지 검사할때 사용될 연산자 operator==()를 제공(오버로딩)해야합니다.
+			- 출력에 사용될 연산자 operator<<()를 제공(오버로딩)해야합니다.
+		
+		!2. DATA와 KEY_TYPE은 기본 생성자를 요구합니다.
+			- rbTree는 pNullNode(NIL)를 생성하는데, 이때 사용될 기본생성자를 요구합니다.
 	*/
 	template <typename DATA, typename KEY_TYPE>
 	class rbTreeNode {
@@ -85,7 +114,7 @@ namespace CUSTOM_SET
 
 			!0. data를 반환합니다.
 		*/
-		_NODISCARD INLINE DATA	GetData() noexcept const { return data; };
+		_NODISCARD INLINE DATA	GetData() const noexcept { return data; };
 
 		/*
 			GetKey()
@@ -93,7 +122,7 @@ namespace CUSTOM_SET
 
 			!0. data로 들어가는 객체에서 해당 함수 (GetKey)가 있어야 합니다.
 		*/
-		_NODISCARD INLINE KEY_TYPE	GetKey() noexcept const { return data->GetKey(); };
+		_NODISCARD INLINE KEY_TYPE	GetKey() const /*noexcept*/ { return data.GetKey(); };
 
 	public:
 		/*
@@ -136,7 +165,7 @@ namespace CUSTOM_SET
 			else
 				std::cout << "NULL ";
 
-			std::cout << endl;
+			std::cout << "\n";
 		}
 	};
 
@@ -191,8 +220,8 @@ namespace CUSTOM_SET
 	public:
 		_NODISCARD DATA					Search(const KEY_TYPE& InKey, bool& RetResult) const;		// 해당 Key값으로 검색하여, True시 노드 포인터 리턴, False시 없음(pNullNode Return). 
 		void							Insert(const DATA& InDATA);									// 해당 key값과, Value 값을 가지고, 내부에서 할당하여 트리에 삽입 후, 해당 노드에 대한 포인터 리턴.
-		void							Delete(_Node* pDeletedNode);			// 인자로 전달된 노드의 포인터를 통해, 해당 노드를 제거해줍니다.
-		bool							DeleteWithSearch(const KEY_TYPE& InKey);						// 해당 키에 해당하는 노드를 찾아 제거해줍니다.
+		void							Delete(_Node* pDeletedNode);								// 인자로 전달된 노드의 포인터를 통해, 해당 노드를 제거해줍니다.
+		bool							DeleteWithSearch(const KEY_TYPE& InKey);					// 해당 키에 해당하는 노드를 찾아 제거해줍니다.
 
 	private:
 		void							_ChangeForInsert(_Node* RetNode);
@@ -251,7 +280,7 @@ namespace CUSTOM_SET
 			}
 
 			// 찾는 키 (함수 인자)와 현재 검사하는 노드의 키가 동일할 때, (True)
-			if (InKey == RetNodeBuffer->GetKey())
+			if (InKey == pRetNodeBuffer->GetKey())
 			{
 				RetResult = true;
 				return pRetNodeBuffer->GetData();
@@ -275,12 +304,12 @@ namespace CUSTOM_SET
 		인자 : 노드의 키, 데이터
 		출력 : 해당 노드에 대한 포인터 제공.
 		
-		!1. 기존에 트리에 존재하는 노드에 대한 동일한 키값에 대하여 Insert를 요청할 경우, 오류의 원인이 될 수 있습니다.
-		!2. 내부에서 Node에 대한 할당(new) 가 일어납니다... Insert를 Mutex로 Lock하지 마세요!
+		!0. 기존에 트리에 존재하는 노드에 대한 동일한 키값에 대하여 Insert를 요청할 경우, 오류의 원인이 될 수 있습니다.
+		!1. 내부에서 Node에 대한 할당(new) 가 일어납니다... Insert를 Mutex로 Lock하지 마세요!
 	*/
 
 	template <typename DATA, typename KEY_TYPE>
-	/*_Node**/ void rbTree<DATA, KEY_TYPE>::Insert(const DATA& InData)
+	/* _Node* */ void rbTree<DATA, KEY_TYPE>::Insert(const DATA& InData)
 	{
 #pragma region [ 삽입할 노드 할당 & 필요한 포인터 변수 정의 ]
 
@@ -292,7 +321,6 @@ namespace CUSTOM_SET
 		rbTreeNode<DATA, KEY_TYPE>* pParentNode = pNullNode;		// 부모노드버퍼, 부모 노드를 저장해두기 위한 포인터입니다.
 
 #pragma endregion
-
 #pragma region [ 삽입하는 노드의 자식노드 및 색 설정 ]
 		/*
 		삽입한 노드 후처리입니다. 
@@ -332,7 +360,6 @@ namespace CUSTOM_SET
 		// 리턴하는 포인터의 up Point(부모 노드 위치)에 먼저, pParentNode(이전 노드 포인터 - 부모 위치)를 넣어줍니다.
 		pRetNode->up = pParentNode;
 #pragma endregion
-
 #pragma region [ 삽입하는 노드의 위치 정하기 ]
 
 		// 현재 부모 노드(RetNode->up == oldBuffer)가 pNullNode일 경우, 삽입한 노드는 트리의 pRoot노드가 됩니다.
@@ -356,7 +383,7 @@ namespace CUSTOM_SET
 		}
 
 #pragma endregion
-
+#pragma region [ 루트 노드의 검정색 보존 ]
 		// 레드 - 블랙트리 법칙에 의해, 어떤 변환이 일어나든, 최종적으로 적색나무에서의 루트 노드는 항상 검정색을 유지해야합니다.
 		pRoot->color = BLACK;
 
@@ -365,34 +392,33 @@ namespace CUSTOM_SET
 
 		// 삽입한 노드를 리턴해줍니다. -> 이제는 안해줍니다.
 		// return pRetNode;
+#pragma endregion
 	};
 
 	/*
-	_ChangeForInsert(rbTreeNode<DATA, KEY_TYPE>* RetNode);
-	- Insert 함수 내부에서 사용되며, 노드를 Insert 한 후에도, Red-Black Tree의 특징을 유지하기 위해 검사 및 처리를 해주는 함수입니다.
+		_ChangeForInsert(rbTreeNode<DATA, KEY_TYPE>* RetNode);
+			- Insert 함수 내부에서 사용되며, 노드를 Insert 하는 과정 중에, Red-Black Tree의 특징을 유지하기 위해 검사하며, 필요 시 관련 처리를 해주는 함수입니다.
 
-	#1. 관련 이론은 위키 백과, 레드-블랙 트리를 확인해 주세요! https://ko.wikipedia.org/wiki/%EB%A0%88%EB%93%9C-%EB%B8%94%EB%9E%99_%ED%8A%B8%EB%A6%AC
-
-	인자 : Insert된 노드의 포인터
-
-	출력 : void
+		인자 : Insert된 노드의 포인터
+		출력 : void
+		
+		#1. 관련 이론은 위키 백과, 레드-블랙 트리를 확인해 주세요! https://ko.wikipedia.org/wiki/%EB%A0%88%EB%93%9C-%EB%B8%94%EB%9E%99_%ED%8A%B8%EB%A6%AC
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
-	void rbTree<DATA, KEY_TYPE>::_ChangeForInsert(rbTreeNode<DATA, KEY_TYPE>* pRetNode)
+	void rbTree<DATA, KEY_TYPE>::_ChangeForInsert(_Node* pRetNode)
 	{
 	LIKE_RECURSION:
 
-		// [Insert Case 2] 이미 기존의 트리는, 레드 블랙 트리의 성질을 만족하기 때문에, 부모의 노드가 검정색일 경우, 고려할 필요가 없습니다. (-> 모든 문제는 더블 레드에서 발생합니다.)  // 해당 조건은 Insert Case 1도 포함하는 조건입니다.
+		// [Insert Case 2] 이미 기존의 트리는, 레드 블랙 트리의 성질을 만족하기 때문에, 부모의 노드가 검정색일 경우, 고려할 필요가 없습니다. (-> 거희 모든 문제는 더블 레드에서 발생합니다.)  // 해당 조건은 Insert Case 1도 포함하는 조건입니다.
 		if (pRetNode->up->color == BLACK)
 		{
 			return;
 		}
 
 		rbTreeNode<DATA, KEY_TYPE>* pUncleNode = _GetUncleNode(pRetNode); // UncleNode Pointer  
-		rbTreeNode<DATA, KEY_TYPE>* pGrandNode = pRetNode->up->up; // 조부모(왕부모) 노드 --> nullptr일 경우는 고려하지 않아도 됩니다. (Insert Case 1 - 2에서 걸러집니다.)
+		rbTreeNode<DATA, KEY_TYPE>* pGrandNode = pRetNode->up->up; // 조부모(왕부모) 노드 --> nullptr일 경우는 존재하지 않습니다. ( [Insert Case 1 - 2] 에서 걸러집니다.)
 
-															   // [Insert Case 3] Recoloring - 부모노드와 UncleNode 모두 빨간색일 때, 이를 모두 검정색으로 바꾸고, 조부모노드를 빨간색으로 변경합니다. 
+		// [Insert Case 3] Recoloring - 부모노드와 UncleNode 모두 빨간색일 때, 이를 모두 검정색으로 바꾸고, 조부모노드를 빨간색으로 변경합니다. 
 		if (pUncleNode->color == RED /*&& pUncleNode != pNullNode // 이 조건은 빨간색에 포함. */)
 		{
 			pRetNode->up->color = BLACK;
@@ -402,13 +428,12 @@ namespace CUSTOM_SET
 			// 이 조부모노드를 빨간색으로 변경했기 때문에, 이에 대해 동일하게 레드블랙트리 조건(더블 레드 테스트 불허용)에 대한 검사가 필요함.
 			//_ChangeForInsert(pGrandNode); // <- 재귀함수를 사용하지 않음 ( 메모리 오버헤드 )
 
-			// 노드 포인터를 변경 후, pGrandNode으로 변경 후, goto문으로 함수 첫째줄로 이동.
+			// 노드 포인터를 조부모 노드로 변경 후, goto문으로 함수 첫째줄로 이동.
 			pRetNode = pGrandNode;
 			goto LIKE_RECURSION;
-			//return;
 		}
 
-		// [Insert Case 4] Restructuring - 부모노드는 빨간색이나, UncleNode는 검은색일 때, 모양에 따라. 작은 회전을 해줌 ( Insert Case 4를 거친 트리는 더블 레드 상태가 되며 규칙에 위반됩니다. )
+		// [Insert Case 4] Restructuring - 부모노드는 빨간색이나, UncleNode는 검은색일 때, 모양에 따라. 작은 회전을 해줌 ( Insert Case 4를 거친 트리는 더블 레드 상태가 되며 규칙에 위반 Insert Case 5를 필수로 거치게 됩니다. )
 		if ((pRetNode == pRetNode->up->right) && (pRetNode->up == pGrandNode->left))
 		{
 			_LeftRotate(pRetNode->up);
@@ -421,8 +446,7 @@ namespace CUSTOM_SET
 			pRetNode = pRetNode->right;
 		}
 
-
-		// [Insert Case 5] 
+		// [Insert Case 5] 여기까지 왔으면 무조건이야 메롱
 		pGrandNode = pRetNode->up->up;
 
 		pRetNode->up->color = BLACK;
@@ -434,28 +458,27 @@ namespace CUSTOM_SET
 			_LeftRotate(pGrandNode);
 	};
 
+
 	// ================================== Delete
 
-
 	/*
-	Delete(rbTreeNode<DATA, KEY_TYPE>* DeletedNode);
-	- 인자로 제공되는 노드의 포인터를 활용해, 해당 노드를 삭제합니다!
+		Delete(rbTreeNode<DATA, KEY_TYPE>* DeletedNode);
+			- 인자로 제공되는 노드의 포인터를 활용해, 해당 노드를 삭제합니다!
 
-	#1. 기존 레드 - 블랙트리 방식과 조금 다른 점은 Copy Value가 아니라, Node 자체를 변경하는 점입니다.
-	( 내부에서 Node에 대한 ptr를 활용할 때, 이에 대한 참조를 보장하기 위함.)
+		인자 : 제거하려는 노드의 포인터
+		출력 : void
 
-	!1. 내부에서 Node에 대한 메모리 회수(delete) 가 일어납니다.
+		#0. 기존 레드 - 블랙트리 방식과 조금 다른 점은 Copy Value가 아니라, Node 자체를 변경하는 점입니다.
+		( 내부에서 Node에 대한 ptr를 활용할 때, 이에 대한 참조를 보장하기 위함.)
 
-	?1. deleted된 노드의 포인터가 pNullNode를 가르키면, nullptr 관련 에러를 방지하지 않을까?
+		!0. 내부에서 Node에 대한 메모리 회수(delete) 가 일어납니다.
 
-	인자 : 제거하려는 노드의 포인터
-	출력 : void
+		?0. deleted된 노드의 포인터가 pNullNode를 가르키면, nullptr 관련 에러를 방지하지 않을까?
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
-	void rbTree<DATA, KEY_TYPE>::Delete(rbTreeNode<DATA, KEY_TYPE>* pDeletedNode)
+	void rbTree<DATA, KEY_TYPE>::Delete(_Node* pDeletedNode)
 	{
-		// 제거하려는 노드가 pNullNode가 아닌지 확인합니다. (pNullNode 제거하면 클납니다.) 실제에서는 이럴 일 거의 없기 떄문에, 주석처리.
+		// 제거하려는 노드가 pNullNode가 아닌지 확인합니다. (pNullNode 제거하면 세상 클납니다.)
 		if (pDeletedNode == pNullNode)
 		{
 			return;
@@ -618,17 +641,16 @@ namespace CUSTOM_SET
 
 
 	/*
-	_ChangeForDelete(rbTreeNode<DATA, KEY_TYPE>* pInNode);
-	- Delete 함수 내부에서 사용되며, 노드를 Delete 한 후에도, Red-Black Tree의 특징을 유지하기 위해 검사 및 처리를 해주는 함수입니다.
+		_ChangeForDelete(rbTreeNode<DATA, KEY_TYPE>* pInNode);
+			- Delete 함수 내부에서 사용되며, 노드를 Delete 한 후에도, Red-Black Tree의 특징을 유지하기 위해 검사 후, 필요 시 처리를 해주는 함수입니다.
 
-	#1. 관련 이론은 위키 백과, 레드-블랙 트리를 확인해 주세요! https://ko.wikipedia.org/wiki/%EB%A0%88%EB%93%9C-%EB%B8%94%EB%9E%99_%ED%8A%B8%EB%A6%AC
-
-	인자 : Delete할 노드의 NextNode( Successor )의 ChildNode (dir - Right)
-	출력 : void
+		인자 : Delete할 노드의 NextNode( Successor )의 ChildNode (dir - Right)
+		출력 : void
+		
+		#0. 관련 이론은 위키 백과, 레드-블랙 트리를 확인해 주세요! https://ko.wikipedia.org/wiki/%EB%A0%88%EB%93%9C-%EB%B8%94%EB%9E%99_%ED%8A%B8%EB%A6%AC
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
-	void rbTree<DATA, KEY_TYPE>::_ChangeForDelete(rbTreeNode<DATA, KEY_TYPE>* pInNode)
+	void rbTree<DATA, KEY_TYPE>::_ChangeForDelete(_Node* pInNode)
 	{
 	LIKE_RECURSION:
 
@@ -711,28 +733,25 @@ namespace CUSTOM_SET
 
 
 	/*
-	DeleteWithSearch(const DATA& InKey);
+		DeleteWithSearch(const DATA& InKey);
+			- 키를 인자로 받아, 해당 키에 해당하는 노드를 찾고, 그 노드를 삭제합니다, 해당하는 키 값을 가진 노드가 없을 시, 삭제하지 않습니다.
 
-	- 키릉 인자로 받아, 해당 키에 해당하는 노드를 찾고, 그 노드를 삭제합니다.
+		인자 : 제거하려는 노드의 키값.
+		출력 : bool값 - 노드 삭제 여부 ( == 해당 키를 가진 노드의 존재 여부 )
+	
+		#0. Ptr를 사용하는 삭제 함수 (Delete) 보다 당연히 무겁습니다. (Search 추가)
 
-	#1. Ptr를 사용하는 삭제 함수 (Delete) 보다 당연히 무겁습니다.
+		!0. 내부에서 찾은 Node에 대한 메모리 회수(delete) 가 일어납니다.
 
-	!1. 내부에서 Node에 대한 메모리 회수(delete) 가 일어납니다.
-
-	!2. 따라서, 외부에서 해당 노드에 포인터를 통한 참조가 있을 경우, nullptr에러가 날 가능성이 큽니다.
-
-	인자 : 제거하려는 노드의 키값.
-
-	출력 : bool값 - 노드 삭제 여부 ( == 해당 키를 가진 노드의 존재 여부 )
+		!1. 따라서, 외부에서 해당 노드에 포인터를 통한 참조가 있을 경우, Dangling Pointer 관련 에러가 날 가능성이 큽니다.
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
-	bool rbTree<DATA, KEY_TYPE>::DeleteWithSearch(const DATA& InKey)
+	bool rbTree<DATA, KEY_TYPE>::DeleteWithSearch(const KEY_TYPE& InKey)
 	{
 		bool retBoolBuffer;
 
-		if (rbTreeNode<DATA, KEY_TYPE>* pDeletedNode = this->Search(InKey, retBoolBuffer),
-			retBoolBuffer)
+		if (_Node* pDeletedNode = this->Search(InKey, retBoolBuffer)
+			; retBoolBuffer)
 		{
 			Delete(pDeletedNode);
 
@@ -747,20 +766,19 @@ namespace CUSTOM_SET
 	// ================================== Rotate
 
 	/*
-	_LeftRotate(rbTreeNode<DATA, KEY_TYPE>* pRetNode)
-	트리구조에서 왼쪽 회전을 시도합니다.
+		_LeftRotate(rbTreeNode<DATA, KEY_TYPE>* pRetNode)
+			- 트리구조에서 왼쪽 회전을 시도합니다.
 
-	#1. https://en.wikipedia.org/wiki/Tree_rotation
-
-	인자 : 회전의 기준이 되는 노드의 포인터
-	출력 : void
+		인자 : 회전의 기준이 되는 노드의 포인터
+		출력 : void
+		
+		#0. https://en.wikipedia.org/wiki/Tree_rotation
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
-	void rbTree<DATA, KEY_TYPE>::_LeftRotate(rbTreeNode<DATA, KEY_TYPE>* pRetNode)
+	void rbTree<DATA, KEY_TYPE>::_LeftRotate(_Node* pRetNode)
 	{
-		rbTreeNode<DATA, KEY_TYPE>* pParentNode = pRetNode->up;
-		rbTreeNode<DATA, KEY_TYPE>* pRightChildNode = pRetNode->right;
+		_Node* pParentNode = pRetNode->up;
+		_Node* pRightChildNode = pRetNode->right;
 
 		// RetNode가 현재 트리의 pRootNode일 때 ( 오른쪽 자식이 루트가 됨 (LeftRotate) )
 		if (pParentNode == pNullNode)
@@ -794,21 +812,21 @@ namespace CUSTOM_SET
 		pRetNode->up = pRightChildNode;
 	};
 
+
 	/*
-	_RightRotate(rbTreeNode<DATA, KEY_TYPE>* pRetNode)
-	트리구조에서 오른쪽 회전을 시도합니다.
+		_RightRotate(rbTreeNode<DATA, KEY_TYPE>* pRetNode)
+			- 트리구조에서 오른쪽 회전을 시도합니다.
 
-	#1. https://en.wikipedia.org/wiki/Tree_rotation
-
-	인자 : 회전의 기준이 되는 노드의 포인터
-	출력 : void
+		인자 : 회전의 기준이 되는 노드의 포인터
+		출력 : void
+		
+		#0. https://en.wikipedia.org/wiki/Tree_rotation
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
-	void rbTree<DATA, KEY_TYPE>::_RightRotate(rbTreeNode<DATA, KEY_TYPE>* pRetNode)
+	void rbTree<DATA, KEY_TYPE>::_RightRotate(_Node* pRetNode)
 	{
-		rbTreeNode<DATA, KEY_TYPE>* pParentNode = pRetNode->up;
-		rbTreeNode<DATA, KEY_TYPE>* pLeftChildNode = pRetNode->left;
+		_Node* pParentNode = pRetNode->up;
+		_Node* pLeftChildNode = pRetNode->left;
 
 		// 주석 _LeftRotate 하고 동일합니다..또 쓰기 너무 귀찮어요...
 
@@ -835,17 +853,17 @@ namespace CUSTOM_SET
 	// ================================== GetNode Function
 
 	/*
-	_GetPrevNode(rbTreeNode<DATA, KEY_TYPE>* InNode);
-	Predecessor를 구하는 함수, 사용되지 않습니다.
+		_GetPrevNode(rbTreeNode<DATA, KEY_TYPE>* InNode);
+			- Predecessor를 구하는 함수, 사용되지 않습니다. _GetNextNode만 사용됩니다. 해당 함수 설명을 확인해주세요.
 
-	인자 : Delete되어, PrevNode를 구해야하는 노드의 포인터
-	출력 : Predecessor Node's Pointer
+		인자 : Delete되어, PrevNode를 구해야하는 노드의 포인터
+		출력 : Predecessor Node's Pointer
 	*/
 
 	template <typename DATA, typename KEY_TYPE>
-	rbTreeNode<DATA, KEY_TYPE>*	rbTree<DATA, KEY_TYPE>::_GetPrevNode(rbTreeNode<DATA, KEY_TYPE>* const pInNode)
+	rbTreeNode<DATA, KEY_TYPE>*	rbTree<DATA, KEY_TYPE>::_GetPrevNode(_Node* const pInNode)
 	{
-		rbTreeNode<DATA, KEY_TYPE>* pRetNode = pInNode;
+		_Node* pRetNode = pInNode;
 
 		// 좌측이 NullNode가 아닐 경우, 
 		if (pRetNode->left != pNullNode) {
@@ -865,24 +883,23 @@ namespace CUSTOM_SET
 	};
 
 	/*
-	_GetNextNode(rbTreeNode<DATA, KEY_TYPE>* InNode);
-	참고(영어입니다.) : https://www.geeksforgeeks.org/inorder-successor-in-binary-search-tree/
+		_GetNextNode(rbTreeNode<DATA, KEY_TYPE>* InNode);
+			- 참고( 으악 영어입니다.) : https://www.geeksforgeeks.org/inorder-successor-in-binary-search-tree/
 
-	조금 말씀드리면, 제가 영어가 부족해 GetNextNode라는 함수명을 썻으나
-	관련 명칭은 Predecessor, Successor이며 각각, 해당 노드의 좌측 서브트리의 최대값 (Predecessor), 해당 노드의 우측 서브트리의 최소값 (Successor) 입니다.
+		조금 말씀드리면, 제가 영어가 부족해 GetNextNode라는 함수명을 썻으나
+		관련되어 보통 사용되는 명칭은 Predecessor, Successor이며 각각, 해당 노드의 좌측 서브트리의 최대값 (Predecessor), 해당 노드의 우측 서브트리의 최소값 (Successor) 혹은 노드를 뜻하는 단어입니다.
 
-	이를 구해야할 경우는,
-	삭제되는 노드가 두 개의 pNullNode가 아닌 자식을 가질 경우, 해당 노드의 자리에 어떤 노드가 와야하는 지를 구하는 것이며,
-	그 자리에 올 수 있는 노드는 Predecessor 또는 Successor가 있습니다.
+		이는 이진트리라는 자료구조 특성상 다음과 같은 의미를 지닙니다.
+		삭제되는 노드가 두 개의 pNullNode가 아닌 자식을 가질 경우, 해당 노드의 자리에 어떤 노드가 와야하는 지를 구하는 것이며,
+		그 자리에 올 수 있는 노드는 Predecessor 또는 Successor가 있습니다.
 
-	참고로 삭제하는 노드가 자식이 없을 경우, 고냥 삭제하면 되고,
-	삭제하는 노드가 1개의 자식을 갖고 있을 경우, 해당 자식을 그 자리에 위치시키면 됩니다(like list)
+		참고로 일반적인 이진트리에서 삭제하는 노드가 자식이 없을 경우, 고냥 삭제하면 되고,
+		삭제하는 노드가 1개의 자식을 갖고 있을 경우, 해당 자식을 그 자리에 위치시키면 됩니다.
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
-	rbTreeNode<DATA, KEY_TYPE>*	rbTree<DATA, KEY_TYPE>::_GetNextNode(rbTreeNode<DATA, KEY_TYPE>* const InNode)
+	rbTreeNode<DATA, KEY_TYPE>*	rbTree<DATA, KEY_TYPE>::_GetNextNode(_Node* const InNode)
 	{
-		rbTreeNode<DATA, KEY_TYPE>* RetNode = InNode;
+		_Node* RetNode = InNode;
 
 		// 우측이 NullNode가 아닐 경우, 
 		if (RetNode->right != pNullNode) {
@@ -903,23 +920,22 @@ namespace CUSTOM_SET
 
 
 	/*
-	_GetSiblingNode(rbTreeNode<DATA, KEY_TYPE>* pInNode);
-	- pInNode의 형제 노드의 포인터를 구하는 함수입니다.
+		_GetSiblingNode(rbTreeNode<DATA, KEY_TYPE>* pInNode);
+			- pInNode의 형제 노드의 포인터를 구하는 함수입니다.
 
-	인자 : 노드의 포인터
-	출력 : 형제 노드의 포인터
+		인자 : 노드의 포인터
+		출력 : 형제 노드의 포인터
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
-	rbTreeNode<DATA, KEY_TYPE>*	rbTree<DATA, KEY_TYPE>::_GetSiblingNode(rbTreeNode<DATA, KEY_TYPE>* const pInNode)
+	rbTreeNode<DATA, KEY_TYPE>*	rbTree<DATA, KEY_TYPE>::_GetSiblingNode(_Node* const pInNode)
 	{
-		rbTreeNode<DATA, KEY_TYPE>* pBufferNode = pInNode->up;
+		_Node* pBufferNode = pInNode->up;
 
 		if (pBufferNode->left == pInNode)
 		{
 			return pBufferNode->right;
 		}
-		else //if (pBufferNode->right == pInNode)
+		else /*if (pBufferNode->right == pInNode) */
 		{
 			return pBufferNode->left;
 		}
@@ -931,21 +947,20 @@ namespace CUSTOM_SET
 
 
 	/*
-	_GetUncleNode(rbTreeNode<DATA, KEY_TYPE>* pInNode);
-	- pInNode의 Uncle 노드의 포인터를 구하는 함수입니다.
+		_GetUncleNode(rbTreeNode<DATA, KEY_TYPE>* pInNode);
+			- pInNode의 Uncle 노드의 포인터를 구하는 함수입니다.
 
-	인자 : 노드의 포인터
-	출력 : 삼촌 노드의 포인터
+		인자 : 노드의 포인터
+		출력 : 삼촌 노드의 포인터
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
-	rbTreeNode<DATA, KEY_TYPE>*	rbTree<DATA, KEY_TYPE>::_GetUncleNode(rbTreeNode<DATA, KEY_TYPE>* const pInNode)
+	rbTreeNode<DATA, KEY_TYPE>*	rbTree<DATA, KEY_TYPE>::_GetUncleNode(_Node* const pInNode)
 	{
-		rbTreeNode<DATA, KEY_TYPE>* pGrandParentNode = pInNode->up->up;
+		_Node* pGrandParentNode = pInNode->up->up;
 
 		if (pInNode->up == pGrandParentNode->left)
 			return pGrandParentNode->right;
-		else
+		else /*if (pInNode->up == pGrandParentNode->right) */
 			return pGrandParentNode->left;
 		//else
 		//{
@@ -959,19 +974,19 @@ namespace CUSTOM_SET
 	//Debug Function
 
 	/*
-	!1. 내부에는 재귀함수를 사용하고 있습니다. 트리 높이가 높을 경우, 스택 오버플로우가 발생할 수 있습니다.
-	(디버그 용도로만 사용하는 것을 추천드립니다.)
+		!0. 재귀함수를 활용하고 있습니다. 트리 높이가 높을 경우, 스택 오버플로우가 발생할 수 있습니다.
+		(디버그 용도로만 사용하는 것을 추천드립니다.)
 	*/
 
 	template <typename DATA, typename KEY_TYPE>
 	void rbTree<DATA, KEY_TYPE>::PrintTree()
 	{
-		rbTreeNode<DATA, KEY_TYPE>* pNodeBuffer = pRoot;
+		_Node* pNodeBuffer = pRoot;
 
 		if (pRoot != pNullNode)
 		{
 			std::cout << "pRootNode's Key : " << pRoot->GetKey() << "\n";
-			std::cout << "Node - Key   Color   Value    Up     Left     Right \n";
+			std::cout << "Node - Key   Color   Up     Left     Right \n";
 			_PrintNodes(pRoot);
 		}
 		else
@@ -979,7 +994,7 @@ namespace CUSTOM_SET
 	}
 
 	template <typename DATA, typename KEY_TYPE>
-	void rbTree<DATA, KEY_TYPE>::_PrintNodes(rbTreeNode<DATA, KEY_TYPE>* pNodeBuffer)
+	void rbTree<DATA, KEY_TYPE>::_PrintNodes(_Node* pNodeBuffer)
 	{
 		if (pNodeBuffer->left != pNullNode)
 			_PrintNodes(pNodeBuffer->left);
@@ -992,4 +1007,46 @@ namespace CUSTOM_SET
 
 #pragma endregion
 
+#pragma region [ Test Func ]
+#ifdef DEBUG_TEST_FUNC
+	class TestKey
+	{
+		int keyValue;
+	public:
+
+		TestKey(int InValue) : keyValue(InValue) {};
+		TestKey() = default;	// for rbtreenode demo
+		~TestKey() = default;
+	public:
+		_NODISCARD INLINE bool operator<(const TestKey& other) const noexcept { return keyValue < other.keyValue ? true : false; };
+		_NODISCARD INLINE bool operator==(const TestKey& other) const noexcept { return keyValue == other.keyValue ? true : false; };
+		_NODISCARD INLINE friend std::ostream& operator<<(std::ostream& os, const TestKey& my) { os << my.keyValue; return os; };
+	};
+
+	class TestData
+	{
+		TestKey key;
+		//others...
+
+	public:
+		TestData(const TestKey& InKey) : key(InKey) {};
+		TestData() = default; // for rbtreenode demo
+		~TestData() = default;
+	public:
+		_NODISCARD INLINE TestKey GetKey() const noexcept { return key; };
+	};
+
+	void TestFunc()
+	{
+		rbTree<TestData, TestKey> testCont;
+		testCont.Insert([]()-> TestData { TestData data([]()->TestKey {TestKey key(5); return key; }()); return data; }());
+		testCont.Insert([]()-> TestData { TestData data([]()->TestKey {TestKey key(3); return key; }()); return data; }());
+		testCont.Insert([]()-> TestData { TestData data([]()->TestKey {TestKey key(1); return key; }()); return data; }());
+		testCont.Insert([]()-> TestData { TestData data([]()->TestKey {TestKey key(4); return key; }()); return data; }());
+		testCont.Insert([]()-> TestData { TestData data([]()->TestKey {TestKey key(2); return key; }()); return data; }());
+
+		testCont.PrintTree();
+	}
+#endif
+#pragma endregion
 }
