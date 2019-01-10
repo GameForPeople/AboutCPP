@@ -10,7 +10,7 @@
 		또 한국어로 주석을 작성하여 조금더 친절한, 
 		레드블랙트리 코드 작성을 목표로 했습니다. 
 			
-		( 사실 제가 대학생이라서...ㅎ 능력부족으로 인해.. 분명히 문제가 될 수 있는 부분이 많아요.. 개선사항이 있으실 경우, PR부탁드려요! )
+		사실 제가 대학생이라서...ㅎ 능력부족으로 인해.. 분명히 문제가 될 수 있는 부분이 많아요.. 개선사항이 있으실 경우, PR부탁드려요!
 	
 	#0. 예제 함수를 제공합니다. CUSTOM_SET::TestFunc()를 main에 넣어주셔요!
 	#1. 재귀함수를 사용하지 않는 트리 순회 함수를 언젠가는 추가....ㅎ	
@@ -28,8 +28,8 @@
 	GameForPeople(github)
 */
 
-// stdafx.h
 // #include <iostream>
+
 #define		INLINE				__inline
 #define		_NODISCARD			[[nodiscard]]
 #define		_DEPRECATED			[[deprecated]]
@@ -206,15 +206,19 @@ namespace CUSTOM_SET_REDBLACKTREE
 		};
 
 		/*
-			!0. 이 예제의 소멸자에서는 pRoot, pNullNode를 제외하고는 delete를 보장하지 않습니다.
+			!0. 190110부터, 소멸자에 Clear가 추가되어, 메모리를 모두 반납합니다.
 		*/
 		~rbTree<DATA, KEY_TYPE>()
 		{
-			/*if (pRoot != nullptr) */
-				delete pRoot;
+			Clear();
 
-			/*if (pNullNode != nullptr) */
-				delete pNullNode;
+			if (pNullNode == pRoot)
+			{
+				pRoot = nullptr;
+			}
+
+			delete pRoot;
+			delete pNullNode;
 		};
 
 	public:
@@ -222,6 +226,7 @@ namespace CUSTOM_SET_REDBLACKTREE
 		void							Insert(const DATA& InDATA);									// 해당 key값과, Value 값을 가지고, 내부에서 할당하여 트리에 삽입 후, 해당 노드에 대한 포인터 리턴.
 		void							Delete(_Node* pDeletedNode);								// 인자로 전달된 노드의 포인터를 통해, 해당 노드를 제거해줍니다.
 		bool							DeleteWithSearch(const KEY_TYPE& InKey);					// 해당 키에 해당하는 노드를 찾아 제거해줍니다.
+		void							Clear();													// pNullNode를 제외하고 모든 다른 노드의 메모리를 반납합니다.
 
 	private:
 		void							_ChangeForInsert(_Node* RetNode);
@@ -259,7 +264,6 @@ namespace CUSTOM_SET_REDBLACKTREE
 
 		!0. RetResult가 false일 때, 예외처리가 필요합니다.
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
 	DATA rbTree<DATA, KEY_TYPE>::Search(const KEY_TYPE& InKey, bool& RetResult) const
 	{
@@ -307,7 +311,6 @@ namespace CUSTOM_SET_REDBLACKTREE
 		!0. 기존에 트리에 존재하는 노드에 대한 동일한 키값에 대하여 Insert를 요청할 경우, 오류의 원인이 될 수 있습니다.
 		!1. 내부에서 Node에 대한 할당(new) 가 일어납니다... Insert를 Mutex로 Lock하지 마세요!
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
 	/* _Node* */ void rbTree<DATA, KEY_TYPE>::Insert(const DATA& InData)
 	{
@@ -763,6 +766,57 @@ namespace CUSTOM_SET_REDBLACKTREE
 		}
 	}
 
+
+	/*
+		Clear();
+			- pNullNode를 제외하고, 트리에 할당된 모든 노드들을 반납합니다.
+
+			인자 : void
+			출력 : void
+	*/
+	template <typename DATA, typename KEY_TYPE>
+	void rbTree<DATA, KEY_TYPE>::Clear() 
+	{
+		_Node* pTraversalNode = pRoot;
+		_Node* pDeletedNode = pRoot;
+		
+		while (7)
+		{
+			if (pTraversalNode->left != pNullNode)
+			{
+				pTraversalNode = pTraversalNode->left;
+				continue;
+			}
+
+			if (pTraversalNode->right != pNullNode)
+			{
+				pTraversalNode = pTraversalNode->right;
+				continue;
+			}
+
+			pDeletedNode = pTraversalNode;
+			
+			if (pTraversalNode->up != pNullNode)
+			{
+				if (pTraversalNode->up->left == pTraversalNode)
+					pTraversalNode->up->left = pNullNode;
+				else /* if (pTraversalNode->up->right == pTraversalNode) */
+					pTraversalNode->up->right = pNullNode;
+
+				pTraversalNode = pTraversalNode->up;
+
+				delete pDeletedNode;
+			}
+			else
+			{
+				delete pDeletedNode;
+				break;
+			}
+		}
+
+		pRoot = pNullNode;
+	};
+
 	// ================================== Rotate
 
 	/*
@@ -859,7 +913,6 @@ namespace CUSTOM_SET_REDBLACKTREE
 		인자 : Delete되어, PrevNode를 구해야하는 노드의 포인터
 		출력 : Predecessor Node's Pointer
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
 	rbTreeNode<DATA, KEY_TYPE>*	rbTree<DATA, KEY_TYPE>::_GetPrevNode(_Node* const pInNode)
 	{
@@ -977,7 +1030,6 @@ namespace CUSTOM_SET_REDBLACKTREE
 		!0. 재귀함수를 활용하고 있습니다. 트리 높이가 높을 경우, 스택 오버플로우가 발생할 수 있습니다.
 		(디버그 용도로만 사용하는 것을 추천드립니다.)
 	*/
-
 	template <typename DATA, typename KEY_TYPE>
 	void rbTree<DATA, KEY_TYPE>::PrintTree()
 	{
