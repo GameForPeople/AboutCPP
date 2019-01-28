@@ -24,45 +24,22 @@ public:
 		_Iter iter = userDataCont.find(InUserId);
 		if (/*_Iter iter = userDataCont.find(InUserId);*/ iter == userDataCont.end())
 		{
-			// 기존에 없던 새로운 UserId
 			return userDataCont.insert(pair<_ID, _Nickname>(InUserId, InNickName)).first;
 		}
-		else
-		{
-			// 동일하든, 안하든 굳이 검사하지 말고, 항상 해당 스트링으로 변경해라.
-			iter->second = InNickName;
-			return iter;
-		}
+		iter->second = InNickName;
+		return iter;
 	}
 
 	_Iter LeaveUser(const string& InUserId)
 	{
-		_Iter iter = userDataCont.find(InUserId);
-		if (/*_Iter iter = userDataCont.find(InUserId);*/ iter == userDataCont.end())
-		{
-			//std::cout << "Error :: LeaveUserData에서 확인되지 않은 유저가 방을 떠났습니다." << "\n";
-			//exit(0 /* == ERROR */);
-		}
-		else
-		{
-			return iter;
-		}
-		// for Warning
-		return iter;
+		// 해당 아이디의 유저가 없을 경우의 수는 고려하지 않음.(조건)
+		return userDataCont.find(InUserId);
 	}
 
 	void ChangeNickName(const string& InUserId, const string& InNickName)
 	{
-		_Iter iter = userDataCont.find(InUserId);
-		if (/*_Iter iter = userDataCont.find(InUserId);*/ iter == userDataCont.end())
-		{
-			//std::cout << "Error :: ChangeNickName에서 확인되지 않은 유저가 닉네임을 변경합니다." << "\n";
-			//exit(0 /* == ERROR */);
-		}
-		else
-		{
-			iter->second = InNickName;
-		}
+		// 해당 아이디의 유저가 없을 경우의 수는 고려하지 않음.(조건)
+		userDataCont.find(InUserId)->second = InNickName;
 	}
 };
 
@@ -70,8 +47,8 @@ class UserLog
 {
 	friend class UserLogManager;
 private:
-	_Iter			userIter; //
-	bool			isEnter;  //
+	_Iter			userIter; 
+	bool			isEnter;  
 
 public:
 	UserLog(const _Iter& InUserIter, const bool InIsEnter) noexcept :
@@ -79,7 +56,7 @@ public:
 		isEnter(InIsEnter)
 	{};
 
-	UserLog() = default;
+	UserLog() = delete;
 	~UserLog() = default;
 };
 
@@ -90,9 +67,9 @@ class UserLogManager
 	const string CONST_LEAVE_STRING;
 
 public:
-	UserLogManager(const int InSize) noexcept
-		: CONST_ENTER_STRING("님이 들어왔습니다.")
-		, CONST_LEAVE_STRING("님이 나갔습니다.")
+	UserLogManager(const int InSize) noexcept : 
+		CONST_ENTER_STRING("님이 들어왔습니다."), 
+		CONST_LEAVE_STRING("님이 나갔습니다.")
 	{
 		userLogCont.reserve(InSize);
 	}
@@ -106,91 +83,75 @@ public:
 	}
 
 	// 스트링을 만들어서 보냅니다.
-	string GetLogForAnswerWithIndex(const int& InIndex)
+	string GetLogForAnswerWithIndex(const int InIndex)
 	{
 		if (userLogCont[InIndex].isEnter == true)
-			return userLogCont[InIndex].userIter->second.append(CONST_ENTER_STRING);
+			return userLogCont[InIndex].userIter->second + CONST_ENTER_STRING;
 		else /* == if (userLogCont[InIndex].isEnter == false) */
-			return userLogCont[InIndex].userIter->second.append(CONST_LEAVE_STRING);
+			return userLogCont[InIndex].userIter->second + CONST_LEAVE_STRING;
 	}
 
 public:
-	inline int GetContSize() noexcept { return userLogCont.size(); }
+	inline int GetContSize() const noexcept { return userLogCont.size(); }
 };
 
-string ReturnIDString(const string& InString, const int& StartIndex)
-{
-	string idStringBuffer;
-	int indexBuffer{ 0 };
-
-	while (InString[StartIndex + indexBuffer] != ' ')
+namespace GLOBAL_FUNCTION {
+	enum class START_INDEX : int
 	{
-		idStringBuffer.push_back(InString[StartIndex + indexBuffer++]);
+		ENTER = 6,
+		LEAVE = 6,
+		CHANGE = 7
+	};
+	
+	string ReturnIDString(const string& InString, const int InStartIndex)
+	{
+		int indexBuffer{ 0 };
+
+		while (InString[InStartIndex + ++indexBuffer] != ' ')
+		{}
+		
+		return InString.substr(InStartIndex, indexBuffer);
 	}
 
-	return idStringBuffer;
-}
-
-string ReturnIDString(const string& InString, const int& StartIndex, const int& EndIndex)
-{
-	string idStringBuffer;
-	int indexBuffer{ 0 };
-
-	while (StartIndex + indexBuffer != EndIndex)
+	void HandleRecordString(const vector<string>& InRecords, UserDataManager* const userDataManager, UserLogManager* const userLogManager)
 	{
-		idStringBuffer.push_back(InString[StartIndex + indexBuffer++]);
-	}
-
-	return idStringBuffer;
-}
-
-string ReturnNickNameString(const string& InString, const int StartIndex, const int EndIndex)
-{
-	string nickNameStringBuffer;
-	int indexBuffer{ 0 };
-
-	while (StartIndex + indexBuffer != EndIndex)
-	{
-		nickNameStringBuffer.push_back(InString[StartIndex + indexBuffer++]);
-	}
-
-	return nickNameStringBuffer;
-}
-
-void HandleRecordString(const vector<string>& InRecords, UserDataManager* userDataManager, UserLogManager* userLogManager)
-{
-	for (auto& record : InRecords)
-	{
-		if (record[0] == 'E') // Enter
+		for (const auto& record : InRecords)
 		{
-			string idStringBuffer = ReturnIDString(record, 6);
-			userLogManager->AddLog(userDataManager->EnterUser(idStringBuffer, ReturnNickNameString(record, idStringBuffer.size() + 6, record.size())), true);
-		}
-		else if (record[0] == 'L') // Leave
-		{
-			userLogManager->AddLog(userDataManager->LeaveUser(ReturnIDString(record, 6, record.size())), false);
-		}
-		else /* else if (InString[0] == 'C') */ // change nickName!
-		{
-			string idStringBuffer = ReturnIDString(record, 7);
-			userDataManager->ChangeNickName(idStringBuffer, ReturnNickNameString(record, idStringBuffer.size() + 7, record.size()));
+			if (record[0] == 'E') // Enter
+			{
+				string idStringBuffer = ReturnIDString(record, static_cast<int>(START_INDEX::ENTER));
+				
+				userLogManager->AddLog(userDataManager->EnterUser( idStringBuffer, 
+					string(record, idStringBuffer.size() + static_cast<int>(START_INDEX::ENTER) + 1)),
+					true );
+			}
+			else if (record[0] == 'L') // Leave
+			{
+				userLogManager->AddLog(userDataManager->LeaveUser(string(record, static_cast<int>(START_INDEX::LEAVE))), false);
+			}
+			else /* else if (InString[0] == 'C') */ // change nickName!
+			{
+				string idStringBuffer = ReturnIDString(record, static_cast<int>(START_INDEX::CHANGE));
+				
+				userDataManager->ChangeNickName(idStringBuffer, string(record, idStringBuffer.size() + static_cast<int>(START_INDEX::CHANGE) + 1));
+			}
 		}
 	}
-}
 
-vector<string> MakeAnswerFromLog(UserLogManager* userLogManager)
-{
-	vector<string> answer;
-
-	const int contSize = userLogManager->GetContSize();
-	answer.reserve(contSize);
-
-	for (int i = 0; i < contSize; ++i)
+	vector<string> MakeAnswerFromLog(UserLogManager* const userLogManager)
 	{
-		answer.emplace_back(userLogManager->GetLogForAnswerWithIndex(i));
-	}
+		vector<string> answer;
 
-	return answer;
+		const int contSize = userLogManager->GetContSize();
+		answer.reserve(contSize);
+
+		for (int i = 0; i < contSize; ++i)
+		{
+			answer.emplace_back(userLogManager->GetLogForAnswerWithIndex(i));
+		}
+
+		return answer;
+	}
 }
 
 vector<string> solution(vector<string> records)
@@ -198,40 +159,8 @@ vector<string> solution(vector<string> records)
 	UserDataManager userDataManager;
 	UserLogManager userLogManager(records.size());
 	
-	HandleRecordString(records, &userDataManager, &userLogManager);
+	GLOBAL_FUNCTION::HandleRecordString(records, &userDataManager, &userLogManager);
 	
-	return MakeAnswerFromLog(&userLogManager);
+	return GLOBAL_FUNCTION::MakeAnswerFromLog(&userLogManager);
 }
 
-class UserData
-{
-	std::string			userId;
-	std::string			nickName;
-
-	//std::vector<bool> userLog;
-public:
-	UserData(const string& InUserId, const string& InNickName) : userId(InUserId), nickName(InNickName)
-	{}
-
-	~UserData() = default;
-
-public:
-	// same = true
-	inline bool CompareUserID(const string& InUserId) const
-	{
-		return !(userId.compare(InUserId));
-	}
-
-	inline bool CompareNickName(const string& InNickName) const
-	{
-		return !(nickName.compare(InNickName));
-	}
-
-	inline void ChangeNickName(const string& InNewNickName)
-	{
-		nickName = InNewNickName;
-	}
-
-	__inline string GetNickName() { return nickName; }
-	__inline string GetUserId() { return userId; }
-};
