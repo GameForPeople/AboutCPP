@@ -1,10 +1,21 @@
 #pragma once
 
+/*
+	2019 카카오 신입 공채 1차 코딩 테스트 2번 문제
+
+	실패율 [정렬] (https://programmers.co.kr/learn/courses/30/lessons/42889#)
+		- 전체 스테이지의 개수 N, 게임을 이용하는 사용자가 현재 멈춰있는 스테이지의 번호가 담긴 배열 stages가 매개변수로 주어질 때, 
+		실패율이 높은 스테이지부터 내림차순으로 스테이지의 번호가 담겨있는 배열을 return 하도록 solution 함수를 완성하라.
+
+		#0. ex) N = 5, stages = [2, 1, 2, 6, 2, 4, 3, 3], result = [3,4,2,1,5]
+		#1. N + 1 은 마지막 스테이지(N 번째 스테이지) 까지 클리어 한 사용자를 나타낸다.
+		#2. 만약 실패율이 같은 스테이지가 있다면 작은 번호의 스테이지가 먼저 오도록 하면 된다.
+		#3. 스테이지에 도달한 유저가 없는 경우 해당 스테이지의 실패율은 0 으로 정의한다.
+*/
+
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include <utility> // for pair
 
 #include <algorithm>
 
@@ -12,104 +23,111 @@ using namespace std;
 
 class GameLog
 {
-	vector<int> stagePlayerScores;
-	vector<int> stageEnterCounts;
-	vector<pair<int,double>> resultCont;
+	friend class GameLogManager;
 
-	int stageNumber;
-	int playerNumber;
+	int			stageIndex;
+	int			failCount;
+	int			allCount;
+	double		failRate;
 
 public:
-	__inline GameLog(const int InStageNumber, const int InPlayNumber) : stageNumber(InStageNumber), playerNumber(InPlayNumber)
+	GameLog(const int InStageIndex) noexcept
+		: stageIndex(InStageIndex)
+		, failCount(0)
+		, allCount(0)
+		, failRate(0.0f)
+	{}
+	~GameLog() = default;
+
+public:
+	inline bool operator>(const GameLog& other) const noexcept
 	{
-		stagePlayerScores.reserve(InStageNumber);
-		stageEnterCounts.reserve(InStageNumber);
-		resultCont.reserve(InStageNumber);
+		return failRate == other.failRate 
+			? !(stageIndex > other.stageIndex)
+			: failRate > other.failRate;
+	}
+};
 
-		int intBuffer = InStageNumber;
+class GameLogManager
+{
+	vector<GameLog> logCont;
 
-		while (intBuffer--)
+	const int stageNumber;
+	const int playerNumber;
+
+public:
+	GameLogManager(const int InStageNumber, const int InPlayerNumber)
+		: stageNumber(InStageNumber), playerNumber(InPlayerNumber)
+		/*, logCont(InStageNumber, { 0, 0, 0.0f })*/
+	{
+		logCont.reserve(stageNumber + 2);	// 0 -> for Index Hash, stageNumber + 1 -> for All clear UserCount
+
+		for (int i = 0; i < stageNumber + 2; ++i)
 		{
-			stagePlayerScores.emplace_back(0);
-			stageEnterCounts.emplace_back(0);
+			logCont.emplace_back(i);
 		}
 	}
 
-	__inline ~GameLog() = default;
+	~GameLogManager() = default;
 
 public:
-	void ProcessPlayerScore(vector<int> InPlayerScores)
+	void CountFailCount(const vector<int>& InPlayerScores)
 	{
-		for (int i : InPlayerScores)
+		for (auto i : InPlayerScores)
 		{
-			if (i - 1 == stageNumber)
-			{
-				CountEnterStage(stageNumber - 1);
-			}
+			++logCont[i].failCount;
+		}
+	}
+
+	void ProcessCountAndRate()
+	{
+		logCont[stageNumber + 1].allCount = logCont[stageNumber + 1].failCount;
+
+		for (int i = stageNumber + 1; i > 0; --i)
+		{
+			logCont[i - 1].allCount = logCont[i].allCount + logCont[i - 1].failCount;
+
+			if (logCont[i - 1].allCount == 0)
+				logCont[i - 1].failRate = 0;
 			else 
-			{
-				CountPlayerScore(i - 1);
-				CountEnterStage(i - 1);
-			}
-		}
-	}
-
-private:
-	void CountPlayerScore(const int InPlayerScore)
-	{
-		++(stagePlayerScores[InPlayerScore]);
-	}
-
-	void CountEnterStage(const int InPlayerScore)
-	{
-		for (int i = 0; i <= InPlayerScore; ++i)
-		{
-			++(stageEnterCounts[i]);
-		}
-	}
-
-public:
-	void CalculateResult()
-	{
-		for (int i = 0; i < stageNumber; ++i)
-		{
-			resultCont.emplace_back( i + 1, (double)stagePlayerScores[i] / stageEnterCounts[i]);
+			logCont[i - 1].failRate = static_cast<double>(logCont[i - 1].failCount) / logCont[i - 1].allCount;
 		}
 	}
 
 	void SortResult()
 	{
-		sort(resultCont.begin(), resultCont.end(), [](pair<int, float> a, pair<int, float> b)->bool
+		// 0번 인덱스 제거.
+		logCont.erase(logCont.begin());
+
+		// 모든 스테이지를 클리어한 결과는 정렬할 필요없음.
+		logCont.erase(logCont.end() - 1);
+
+		sort(logCont.begin(), logCont.end(), [](const GameLog& a, const GameLog& b)->bool
 		{
-			return a.second > b.second;
+			return a > b;
 		});
 	}
 
-	void PrintAll()
+	vector<int> GetAnswer()
 	{
-		for (auto i : resultCont)
-		{
-			std::cout << "   " << i.first << ":" << i.second << "  ";
-		}
-	}
+		vector<int> answer(logCont.size(), 0);
 
-	void DebugPrint()
-	{
-		for (int i = 0; i < stageNumber; ++i)
+		for (int i = 0; i < logCont.size(); ++i)
 		{
-			std::cout << i << " 번째, 점수 : " << stagePlayerScores[i] << " 접속  : " << stageEnterCounts[i] << std::endl;
+			answer[i] = logCont[i].stageIndex;
 		}
+
+		return answer;
 	}
 };
 
-//vector<int>
-void Solution(int n, vector<int> InPlayerScores)
+vector<int> solution(int n, vector<int> InPlayerScores)
 {
-	GameLog logData(n, InPlayerScores.size());
+	GameLogManager logManager(n, InPlayerScores.size());
 
-	logData.ProcessPlayerScore(InPlayerScores);
-	logData.CalculateResult();
-	logData.SortResult();
-	logData.PrintAll();
-	//myData.DebugPrint();
+	logManager.CountFailCount(InPlayerScores);
+	logManager.ProcessCountAndRate();
+	logManager.SortResult();
+
+	return logManager.GetAnswer();
 }
