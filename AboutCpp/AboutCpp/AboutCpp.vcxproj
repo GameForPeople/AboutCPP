@@ -18,36 +18,138 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\1차_비밀지도.h" />
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제1_오픈채팅방.h" />
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제2_실패율.h" />
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제3_후보키.h" />
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제4_무지의_먹방_라이브.h" />
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제5_길_찾기_게임.h" />
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제7_블록게임.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\2016년.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\x만큼_간격이_있는_n개의_숫자.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\가운데_글자_가져오기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\같은_숫자는_싫어.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\나누어_떨어지는_숫자_배열.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\두_정수_사이의_합.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열_내_p와_y의_개수.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열_내_마음대로_정렬하기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열_내림차순으로_배치하기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열_다루기_기본.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열을_정수로_바꾸기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\서울에서_김서방_찾기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\소수 찾기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\소수의_합.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\수박수박수박수박수박수.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\시저_암호.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\약수의_합.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\예산.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\자릿수_더하기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\자연수_뒤집어_배열로_만들기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\제일_작은_수_제거하기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\직사각형_별찍기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\짝수와_홀수.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\콜라츠_추측.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\평균_구하기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\하샤드_수.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\핸드폰_번호_가리기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level1\행렬의_덧셈.h" />
+    <ClInclude Include="Algorithm\Programmers\Level2\124_나라의_숫자.h" />
+    <ClInclude Include="Algorithm\Programmers\Level2\가장_큰_정사각형_찾기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level2\다음_큰_숫자.h" />
+    <ClInclude Include="Algorithm\Programmers\Level2\땅따먹기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level2\숫자의_표현.h" />
+    <ClInclude Include="Algorithm\Programmers\Level2\올바른_괄호.h" />
+    <ClInclude Include="Algorithm\Programmers\Level2\최댓값과_최솟값.h" />
+    <ClInclude Include="Algorithm\Programmers\Level2\최솟값_만들기.h" />
+    <ClInclude Include="Algorithm\Programmers\Level4\선입_선출_스케쥴링.h" />
+    <ClInclude Include="Algorithm\Programmers\Level4\올바른_괄호의_갯수.h" />
+    <ClInclude Include="Algorithm\Programmers\Level5\직사각형의_넓이_가로스캔.h" />
+    <ClInclude Include="Algorithm\Programmers\Level5\직사각형의_넓이_새끼추가방법_x1백업.h" />
+    <ClInclude Include="Algorithm\Programmers\Level5\직사각형의_넓이.h" />
+    <ClInclude Include="Algorithm\Programmers\스택_큐\쇠막대기.h" />
+    <ClInclude Include="Algorithm\Programmers\스택_큐\탑.h" />
+    <ClInclude Include="Algorithm\Programmers\스택_큐\프린터.h" />
+    <ClInclude Include="Algorithm\Programmers\완전탐색\모의고사.h" />
+    <ClInclude Include="Algorithm\Programmers\정렬\H-Index.h" />
+    <ClInclude Include="Algorithm\Programmers\정렬\K번째수.h" />
+    <ClInclude Include="Algorithm\Programmers\정렬\가장_큰_수.h" />
+    <ClInclude Include="Algorithm\Programmers\탐욕법\체육복.h" />
+    <ClInclude Include="Algorithm\Programmers\탐욕법\큰_수_만들기.h" />
+    <ClInclude Include="Algorithm\Programmers\해시\베스트앨범.h" />
+    <ClInclude Include="Algorithm\Programmers\해시\완주하지_못한_선수.h" />
+    <ClInclude Include="Algorithm\Programmers\해시\위장.h" />
+    <ClInclude Include="Algorithm\Programmers\해시\전화번호_목록.h" />
+    <ClInclude Include="Algorithm\Programmers\힙\더_맵게.h" />
+    <ClInclude Include="Algorithm\Programmers\힙\라면공장.h" />
+    <ClInclude Include="BasicC++\BaseStructPointer.h" />
+    <ClInclude Include="BasicC++\BinaryFileIO.h" />
+    <ClInclude Include="BasicC++\Bitwise_Operator.h" />
+    <ClInclude Include="BasicC++\CalledBy.h" />
+    <ClInclude Include="BasicC++\ContainerWithEunmClass.h" />
+    <ClInclude Include="BasicC++\Test_FileIO.h" />
+    <ClInclude Include="BasicC++\Weak_ptr_GetTest.h" />
+    <ClInclude Include="BasicC++\Move Constructor.h" />
+    <ClInclude Include="BasicC++\ReturnBy.h" />
+    <ClInclude Include="BasicC++\sharedptr_ReferenceCount_Test.h" />
+    <ClInclude Include="BasicC++\smartpointer_SharedWithWeak.h" />
+    <ClInclude Include="BasicC++\Test_Unicode.h" />
+    <ClInclude Include="BasicC++\wstring_Test.h" />
+    <ClInclude Include="C++17\If-init.h" />
+    <ClInclude Include="C++17\string_view.h" />
+    <ClInclude Include="C++17\StructuredBindings.h" />
+    <ClInclude Include="Constructor.h" />
+    <ClInclude Include="CustomContainer\Custom_Map_RedBlackTree.h" />
+    <ClInclude Include="CustomContainer\Custom_Node_List.h" />
+    <ClInclude Include="CustomContainer\Custom_Node_Queue.h" />
+    <ClInclude Include="CustomContainer\Custom_Set_RedBlackTree.h" />
+    <ClInclude Include="EffectiveC++\항목2_define을_쓰려거든_const,enum,inline을_떠올리자.h" />
+    <ClInclude Include="EffectiveC++\항목3_낌새만_보이면_const를_들이대_보자.h" />
+    <ClInclude Include="IFvsSWITCHvsFUNCION.h" />
+    <ClInclude Include="STL\Example_Map.h" />
+    <ClInclude Include="STL\Example_Set.h" />
+    <ClInclude Include="STL\Example_Vector.h" />
+    <ClInclude Include="test.h" />
+    <ClInclude Include="Test_reference_wrapper.h" />
+    <ClInclude Include="정수_내림차순으로_배치하기.h" />
+    <ClInclude Include="주윤아_STL.h" />
+    <ClInclude Include="직사각형의_넓이_1차원벡터방법_버퍼1.h" />
+    <ClInclude Include="직사각형의_넓이_1차원벡터방법_버퍼2.h" />
+    <ClInclude Include="직사각형의_넓이_새끼추가방법_x1을마이너스하는방법.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{5BD6D572-9FD0-4215-9E27-790C4641394E}</ProjectGuid>
     <RootNamespace>AboutCpp</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -74,16 +176,18 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,16 +210,15 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

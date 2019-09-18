@@ -13,5 +13,357 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="헤더 파일\Algorithm">
+      <UniqueIdentifier>{084e133f-6187-455b-a8d7-b8a970120625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\KaKao">
+      <UniqueIdentifier>{e6231317-d449-4056-8273-772a5730e26e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\KaKao\2019">
+      <UniqueIdentifier>{290f8428-9520-4ac8-955e-b803aec2c8f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\Level_1">
+      <UniqueIdentifier>{53e6bdea-8033-41ce-b62e-03a659690135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\Level_2">
+      <UniqueIdentifier>{21e05a2f-e007-41df-a452-258e99c5e742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\Level4">
+      <UniqueIdentifier>{00b463a1-9df9-47e8-94d5-62befb1ab2b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\Level5">
+      <UniqueIdentifier>{623b7f4f-939d-4296-ad12-bed1382ddca7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\c++17">
+      <UniqueIdentifier>{ec7cd421-ba5b-4b2d-9317-212b4c79be47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\BasicC++">
+      <UniqueIdentifier>{622a0107-742b-46f4-b53a-8d2d1109535f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\EffectiveC++">
+      <UniqueIdentifier>{2c4ea8ec-c636-4746-8d3f-a3b240bc7aa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\해시">
+      <UniqueIdentifier>{2b047e4e-2c60-4440-9428-604bc0725d3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\스택/큐">
+      <UniqueIdentifier>{c4637357-b25c-429e-b757-9a5b9c7e1481}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\힙">
+      <UniqueIdentifier>{91a8442c-639f-4e29-93b6-08e89bf997bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\정렬">
+      <UniqueIdentifier>{33b6bcaa-8b5a-4782-8100-66437f60f20c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\완전탐색">
+      <UniqueIdentifier>{9448dbe9-1358-4674-b294-ef926ddd8c17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Algorithm\탐욕법">
+      <UniqueIdentifier>{1cff2a0a-d6d0-4cad-97da-5a7c8c526433}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\STL">
+      <UniqueIdentifier>{fa2f67fc-f908-4e26-82da-2e580d0f5310}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\CustomContainer">
+      <UniqueIdentifier>{8190a8bb-a519-4ede-9977-a1766761bbf4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Algorithm\Programmers\Level1\2016년.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\가운데_글자_가져오기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\같은_숫자는_싫어.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\나누어_떨어지는_숫자_배열.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\두_정수_사이의_합.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열_내_마음대로_정렬하기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level2\124_나라의_숫자.h">
+      <Filter>헤더 파일\Algorithm\Level_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열_내_p와_y의_개수.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level2\가장_큰_정사각형_찾기.h">
+      <Filter>헤더 파일\Algorithm\Level_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level2\올바른_괄호.h">
+      <Filter>헤더 파일\Algorithm\Level_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level2\다음_큰_숫자.h">
+      <Filter>헤더 파일\Algorithm\Level_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level2\땅따먹기.h">
+      <Filter>헤더 파일\Algorithm\Level_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level2\최댓값과_최솟값.h">
+      <Filter>헤더 파일\Algorithm\Level_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level2\숫자의_표현.h">
+      <Filter>헤더 파일\Algorithm\Level_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level5\직사각형의_넓이.h">
+      <Filter>헤더 파일\Algorithm\Level5</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level4\올바른_괄호의_갯수.h">
+      <Filter>헤더 파일\Algorithm\Level4</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level4\선입_선출_스케쥴링.h">
+      <Filter>헤더 파일\Algorithm\Level4</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열_내림차순으로_배치하기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열_다루기_기본.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level2\최솟값_만들기.h">
+      <Filter>헤더 파일\Algorithm\Level_2</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\서울에서_김서방_찾기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\수박수박수박수박수박수.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="직사각형의_넓이_1차원벡터방법_버퍼1.h">
+      <Filter>헤더 파일\Algorithm\Level5</Filter>
+    </ClInclude>
+    <ClInclude Include="직사각형의_넓이_1차원벡터방법_버퍼2.h">
+      <Filter>헤더 파일\Algorithm\Level5</Filter>
+    </ClInclude>
+    <ClInclude Include="직사각형의_넓이_새끼추가방법_x1을마이너스하는방법.h">
+      <Filter>헤더 파일\Algorithm\Level5</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level5\직사각형의_넓이_새끼추가방법_x1백업.h">
+      <Filter>헤더 파일\Algorithm\Level5</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level5\직사각형의_넓이_가로스캔.h">
+      <Filter>헤더 파일\Algorithm\Level5</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\소수 찾기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\문자열을_정수로_바꾸기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\시저_암호.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\약수의_합.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\자릿수_더하기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="정수_내림차순으로_배치하기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\제일_작은_수_제거하기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\1차_비밀지도.h">
+      <Filter>헤더 파일\Algorithm\KaKao</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\자연수_뒤집어_배열로_만들기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\짝수와_홀수.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제1_오픈채팅방.h">
+      <Filter>헤더 파일\Algorithm\KaKao\2019</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제2_실패율.h">
+      <Filter>헤더 파일\Algorithm\KaKao\2019</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제3_후보키.h">
+      <Filter>헤더 파일\Algorithm\KaKao\2019</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제4_무지의_먹방_라이브.h">
+      <Filter>헤더 파일\Algorithm\KaKao\2019</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제5_길_찾기_게임.h">
+      <Filter>헤더 파일\Algorithm\KaKao\2019</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제7_블록게임.h">
+      <Filter>헤더 파일\Algorithm\KaKao\2019</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\Bitwise_Operator.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\BinaryFileIO.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectiveC++\항목2_define을_쓰려거든_const,enum,inline을_떠올리자.h">
+      <Filter>헤더 파일\EffectiveC++</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectiveC++\항목3_낌새만_보이면_const를_들이대_보자.h">
+      <Filter>헤더 파일\EffectiveC++</Filter>
+    </ClInclude>
+    <ClInclude Include="C++17\If-init.h">
+      <Filter>헤더 파일\c++17</Filter>
+    </ClInclude>
+    <ClInclude Include="C++17\string_view.h">
+      <Filter>헤더 파일\c++17</Filter>
+    </ClInclude>
+    <ClInclude Include="C++17\StructuredBindings.h">
+      <Filter>헤더 파일\c++17</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\해시\완주하지_못한_선수.h">
+      <Filter>헤더 파일\Algorithm\해시</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\해시\전화번호_목록.h">
+      <Filter>헤더 파일\Algorithm\해시</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\스택_큐\쇠막대기.h">
+      <Filter>헤더 파일\Algorithm\스택/큐</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\스택_큐\프린터.h">
+      <Filter>헤더 파일\Algorithm\스택/큐</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\힙\더_맵게.h">
+      <Filter>헤더 파일\Algorithm\힙</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\힙\라면공장.h">
+      <Filter>헤더 파일\Algorithm\힙</Filter>
+    </ClInclude>
+    <ClInclude Include="Constructor.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\정렬\K번째수.h">
+      <Filter>헤더 파일\Algorithm\정렬</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\정렬\가장_큰_수.h">
+      <Filter>헤더 파일\Algorithm\정렬</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\정렬\H-Index.h">
+      <Filter>헤더 파일\Algorithm\정렬</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\완전탐색\모의고사.h">
+      <Filter>헤더 파일\Algorithm\완전탐색</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\탐욕법\체육복.h">
+      <Filter>헤더 파일\Algorithm\탐욕법</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\탐욕법\큰_수_만들기.h">
+      <Filter>헤더 파일\Algorithm\탐욕법</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\평균_구하기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\콜라츠_추측.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\하샤드_수.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\핸드폰_번호_가리기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\행렬의_덧셈.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\x만큼_간격이_있는_n개의_숫자.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\직사각형_별찍기.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\예산.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\CalledBy.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\ReturnBy.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\BaseStructPointer.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\Example_Map.h">
+      <Filter>헤더 파일\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\Example_Vector.h">
+      <Filter>헤더 파일\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomContainer\Custom_Map_RedBlackTree.h">
+      <Filter>헤더 파일\CustomContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomContainer\Custom_Node_List.h">
+      <Filter>헤더 파일\CustomContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomContainer\Custom_Set_RedBlackTree.h">
+      <Filter>헤더 파일\CustomContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomContainer\Custom_Node_Queue.h">
+      <Filter>헤더 파일\CustomContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="Test_reference_wrapper.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\smartpointer_SharedWithWeak.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\sharedptr_ReferenceCount_Test.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\wstring_Test.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\Move Constructor.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\Test_Unicode.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\Level1\소수의_합.h">
+      <Filter>헤더 파일\Algorithm\Level_1</Filter>
+    </ClInclude>
+    <ClInclude Include="STL\Example_Set.h">
+      <Filter>헤더 파일\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\Weak_ptr_GetTest.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\ContainerWithEunmClass.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="주윤아_STL.h">
+      <Filter>헤더 파일\STL</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicC++\Test_FileIO.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="IFvsSWITCHvsFUNCION.h">
+      <Filter>헤더 파일\BasicC++</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\해시\위장.h">
+      <Filter>헤더 파일\Algorithm\해시</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\해시\베스트앨범.h">
+      <Filter>헤더 파일\Algorithm\해시</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm\Programmers\스택_큐\탑.h">
+      <Filter>헤더 파일\Algorithm\스택/큐</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -4,29 +4,23 @@
 
 #include <algorithm>
 
-#include "BasicC++/BaseStructPointer.h"
+#include "IFvsSWITCHvsFUNCION.h"
 
 using namespace std;
 
 int main()
 {
-	clock_t startTime, endTime;
-
-	startTime = clock();
-	//---------------------------
-
-	TestStructPoint::TestStruct *testStruct;
-	testStruct = new TestStructPoint::TestStruct;
-
-	//std::cout << "사이즈는 : " << sizeof(testStruct.dataBuffer) << std::endl;
-
-	delete testStruct;
-
-	//----------------------------
-	endTime = clock();
-
-	printf("함수 소요된 시간 : %.3f \n", (float)(endTime - startTime) / CLOCKS_PER_SEC);
-
+	//clock_t startTime, endTime;
+	//
+	//startTime = clock();
+	////---------------------------
+	IFvsSWITCHvsFUNCTION::TestClass testClass;
+	testClass();
+	////----------------------------
+	//endTime = clock();
+	//
+	//printf("함수 소요된 시간 : %.3f \n", (float)(endTime - startTime) / CLOCKS_PER_SEC);
+	//
 	system("pause");
 	return 0;
 }
@@ -36,14 +30,15 @@ int main()
 //#include "Algorithm\Programmers\Level1\소수 찾기.h"
 //#include "Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제1_오픈채팅방.h"
 
-//vector<string> stringBuffer;
-//stringBuffer.emplace_back("Enter uid1234 Muzzi");
-//stringBuffer.emplace_back("Enter uid4567 Prodo");
-//stringBuffer.emplace_back("Leave uid1234");
-//stringBuffer.emplace_back("Enter uid1234 Prodo");
-//stringBuffer.emplace_back("Change uid4567 Ryan");
+//vector<string> strings{
+//	"Enter uid1234 Muzi",
+//	"Enter uid4567 Prodo",
+//	"Leave uid1234",
+//	"Enter uid1234 Prodo",
+//	"Change uid4567 Ryan"
+//};
 //
-//Solution(stringBuffer);
+//solution(strings);
 
 //#include "Algorithm\KAKAO_BLIND_RECRUITMENT\2019\문제2_실패율.h"
 
