@@ -71,3 +71,18 @@ bool solution(vector<string> phone_book) {
 	
 	return answer;
 }
+
+bool otherSolution(vector<string> phone_book) {
+	bool answer = true;
+
+	sort(phone_book.begin(), phone_book.end());
+
+	for (int i = 0, LOOP_COUNT = phone_book.size() - 1; i < LOOP_COUNT; ++i)
+	{
+		if (phone_book[i] == phone_book[(__int64)i + 1].substr(0, phone_book[i].size()))
+		{
+			answer = false;
+		}
+	}
+	return answer;
+}
