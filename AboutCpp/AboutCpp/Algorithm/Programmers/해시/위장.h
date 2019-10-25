@@ -3,6 +3,7 @@
 #include<string>
 #include<vector>
 #include<iostream>
+#include <unordered_map>
 
 namespace 위장
 {
@@ -36,5 +37,29 @@ namespace 위장
 		}
 
 		return answer - 1;
+	}
+
+
+	int otherSolution(std::vector<std::vector<std::string>> clothes)
+	{
+		using namespace std;
+		
+		int answer = 1;
+
+		std::unordered_map <string, int> cont;
+
+		for (int i = 0, size = clothes.size(); i < size; ++i)
+		{
+			++cont[clothes[i][1]];
+		}
+
+		for (auto it = cont.begin(); it != cont.end(); ++it)
+		{
+			answer *= (it->second + 1);
+		}
+
+		--answer;
+		 
+		return answer;
 	}
 }
