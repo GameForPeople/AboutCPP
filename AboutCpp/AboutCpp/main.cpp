@@ -4,18 +4,27 @@
 
 #include <algorithm>
 
-#include "IFvsSWITCHvsFUNCION.h"
+#include "ClassOperator.h"
 
 using namespace std;
 
+using _Type = int*;
+
 int main()
 {
+	_Type ptr = new std::remove_pointer<_Type>::type;
+
+	CLASS_OPERATOR::ExampleClass ec;
+
+	std::cout << *ec << std::endl;
+	auto& i = *ec;
+	++i;
+	std::cout << *ec << std::endl;
+
 	//clock_t startTime, endTime;
 	//
 	//startTime = clock();
 	////---------------------------
-	IFvsSWITCHvsFUNCTION::TestClass testClass;
-	testClass();
 	////----------------------------
 	//endTime = clock();
 	//
