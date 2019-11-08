@@ -5,6 +5,7 @@
 #include <map>
 #include <queue>
 #include <algorithm>
+#include <unordered_map>
 
 namespace 海胶飘举裹
 {
@@ -78,5 +79,45 @@ namespace 海胶飘举裹
 		}
 
 		return retCont;
+	}
+
+
+	struct Node
+	{
+		int index;
+		int playCount;
+
+		Node(int index, int playCount) noexcept : index(index), playCount(playCount) {};
+		
+	};
+
+	std::vector<int> OtherSoultion(vector<string> genres, vector<int> plays)
+	{
+		using namespace std;
+
+		using _Index = int;
+		using _PlayCount = int;
+
+		vector<int> answer;
+
+		auto comp = [/* void */](Node * a, Node * b) noexcept -> bool
+		{
+			if (a->playCount == b->playCount)
+			{
+				return a->index > b->index;
+			}
+
+			return a->playCount < b->playCount;
+		};
+
+		unordered_map<string, priority_queue<Node, vector<Node>, decltype(comp) >> cont;
+
+		for (int i = 0, size = genres.size(); i < size; ++i)
+		{
+			cont[genres[i]].emplace(std::make_pair(i, plays[i]));
+		}
+
+
+		return answer;
 	}
 }

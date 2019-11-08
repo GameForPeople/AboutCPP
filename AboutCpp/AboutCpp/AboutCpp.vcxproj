@@ -107,10 +107,11 @@
     <ClInclude Include="EffectiveC++\항목2_define을_쓰려거든_const,enum,inline을_떠올리자.h" />
     <ClInclude Include="EffectiveC++\항목3_낌새만_보이면_const를_들이대_보자.h" />
     <ClInclude Include="IFvsSWITCHvsFUNCION.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="STL\Example_Map.h" />
     <ClInclude Include="STL\Example_Set.h" />
     <ClInclude Include="STL\Example_Vector.h" />
-    <ClInclude Include="test.h" />
+    <ClInclude Include="File_IO.h" />
     <ClInclude Include="Test_reference_wrapper.h" />
     <ClInclude Include="정수_내림차순으로_배치하기.h" />
     <ClInclude Include="주윤아_STL.h" />
@@ -120,6 +121,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -189,6 +193,7 @@
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

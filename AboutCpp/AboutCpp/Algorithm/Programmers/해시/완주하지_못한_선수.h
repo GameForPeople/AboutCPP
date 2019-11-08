@@ -78,6 +78,7 @@ string BestSolution(vector<string> participant, vector<string> completion) {
 		}
 		else
 		{
+			strMap.find(elem)--;
 			strMap[elem]--;
 			if (strMap[elem] < 0)
 			{
