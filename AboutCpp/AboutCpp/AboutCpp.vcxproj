@@ -98,6 +98,7 @@
     <ClInclude Include="C++17\If-init.h" />
     <ClInclude Include="C++17\string_view.h" />
     <ClInclude Include="C++17\StructuredBindings.h" />
+    <ClInclude Include="ClassOperator.h" />
     <ClInclude Include="Constructor.h" />
     <ClInclude Include="CustomContainer\Custom_Map_RedBlackTree.h" />
     <ClInclude Include="CustomContainer\Custom_Node_List.h" />
